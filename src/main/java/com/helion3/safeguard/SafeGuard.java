@@ -153,24 +153,27 @@ public class SafeGuard {
      * @throws IOException
      */
     protected void loadZones() throws IOException {
-        Files.walk(Paths.get(parentDirectory.getAbsolutePath() + "/zones")).forEach(filePath -> {
-            if (Files.isRegularFile(filePath) && filePath.toString().endsWith(".json")) {
-                try {
-                    FileReader reader = new FileReader(filePath.toString());
-                    JsonObject json = new JsonParser().parse(reader).getAsJsonObject();
+        File dir = new File(parentDirectory.getAbsolutePath() + "/zones");
+        if (dir.exists()) {
+            Files.walk(Paths.get(parentDirectory.getAbsolutePath() + "/zones")).forEach(filePath -> {
+                if (Files.isRegularFile(filePath) && filePath.toString().endsWith(".json")) {
+                    try {
+                        FileReader reader = new FileReader(filePath.toString());
+                        JsonObject json = new JsonParser().parse(reader).getAsJsonObject();
 
-                    // Convert to a data container
-                    DataContainer data = DataUtil.jsonToDataContainer(json);
+                        // Convert to a data container
+                        DataContainer data = DataUtil.jsonToDataContainer(json);
 
-                    // Create a zone
-                    zoneManager.add(Zone.from(data));
+                        // Create a zone
+                        zoneManager.add(Zone.from(data));
 
-                    reader.close();
-                } catch (Exception e) {
-                    logger.error("Json Exception for file " + filePath.toString());
-                    e.printStackTrace();
+                        reader.close();
+                    } catch (Exception e) {
+                        logger.error("Json Exception for file " + filePath.toString());
+                        e.printStackTrace();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 }
