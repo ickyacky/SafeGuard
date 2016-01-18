@@ -69,10 +69,12 @@ public class ZoneCreateCommand implements CommandCallable {
         SafeGuard.getActiveBuffers().remove(player);
 
         // Create a new zone
-        Zone zone = new Zone(args[0], buffer.getZoneVolume());
+        Zone zone = new Zone(args[0], player.getWorld(), buffer.getZoneVolume());
         zone.addOwner(player.getProfile());
 
+        // Publish and save
         SafeGuard.getZoneManager().add(zone);
+        zone.save();
 
         source.sendMessage(Format.success("Zone created successfully!"));
 
@@ -86,21 +88,21 @@ public class ZoneCreateCommand implements CommandCallable {
 
     @Override
     public boolean testPermission(CommandSource source) {
-        return source.hasPermission("safehaven.create");
+        return source.hasPermission("safeguard.create");
     }
 
     @Override
     public Optional<Text> getShortDescription(CommandSource source) {
-        return Optional.of(Text.of("Mark a position as a zone boundary."));
+        return Optional.of(Text.of("Create a new zone."));
     }
 
     @Override
     public Optional<Text> getHelp(CommandSource source) {
-        return Optional.of(Text.of("Create a rectangle with two positions."));
+        return Optional.of(Text.of("Create a new zone."));
     }
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Text.of("/safe pos");
+        return Text.of("/sg pos");
     }
 }

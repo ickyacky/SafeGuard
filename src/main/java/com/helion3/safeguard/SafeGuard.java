@@ -23,11 +23,13 @@
  */
 package com.helion3.safeguard;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
+import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
@@ -39,15 +41,30 @@ import com.helion3.safeguard.listeners.ChangeBlockListener;
 import com.helion3.safeguard.zones.ZoneBuffer;
 import com.helion3.safeguard.zones.ZoneManager;
 
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.loader.ConfigurationLoader;
+
 @Plugin(id = "SafeGuard", name = "SafeGuard", version = "1.0")
 public class SafeGuard {
+    private static Configuration config;
     private static Game game;
     private static Logger logger;
+    private static File parentDirectory;
     private static Map<Player, ZoneBuffer> activeBuffers = new HashMap<Player, ZoneBuffer>();
     private static ZoneManager zoneManager = new ZoneManager();
 
+    @Inject
+    @DefaultConfig(sharedRoot = false)
+    private File defaultConfig;
+
+    @Inject
+    @DefaultConfig(sharedRoot = false)
+    private ConfigurationLoader<CommentedConfigurationNode> configManager;
+
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
+        parentDirectory = defaultConfig.getParentFile();
+
         // Commands
         game.getCommandManager().register(this, SafeGuardCommands.getCommand(), "sg", "safeguard");
 
@@ -67,6 +84,15 @@ public class SafeGuard {
     }
 
     /**
+     * Get the logger.
+     *
+     * @return Logger
+     */
+    public static Logger getLogger() {
+        return logger;
+    }
+
+    /**
      * Injects the Logger instance for this plugin
      * @param log Logger
      */
@@ -82,6 +108,14 @@ public class SafeGuard {
      */
     public static Map<Player, ZoneBuffer> getActiveBuffers() {
         return activeBuffers;
+    }
+
+    /**
+     * Get parent directory.
+     * @return File
+     */
+    public static File getParentDirectory() {
+        return parentDirectory;
     }
 
     /**
