@@ -29,6 +29,7 @@ import java.util.List;
 import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.helion3.safeguard.util.Vector3iTransformer;
 import com.helion3.safeguard.volumes.CuboidVolume;
 
 public class CubicalZoneBuffer implements ZoneBuffer {
@@ -42,6 +43,10 @@ public class CubicalZoneBuffer implements ZoneBuffer {
     @Override
     public void addPosition(Vector3i position) {
         positions.add(position);
+
+        if (isComplete()) {
+            sortPositions();
+        }
     }
 
     @Override
@@ -50,7 +55,18 @@ public class CubicalZoneBuffer implements ZoneBuffer {
     }
 
     @Override
-    public CuboidVolume getZoneVolume() {
+    public void transformMinPosition(Vector3iTransformer transformer) {
+        positions.set(0, transformer.transform(positions.get(0)));
+        sortPositions();
+    }
+
+    @Override
+    public void transformMaxPosition(Vector3iTransformer transformer) {
+        positions.set(1, transformer.transform(positions.get(1)));
+        sortPositions();
+    }
+
+    protected void sortPositions() {
         int minX = Math.min(positions.get(0).getX(), positions.get(1).getX());
         int minY = Math.min(positions.get(0).getY(), positions.get(1).getY());
         int minZ = Math.min(positions.get(0).getZ(), positions.get(1).getZ());
@@ -59,6 +75,12 @@ public class CubicalZoneBuffer implements ZoneBuffer {
         int maxY = Math.max(positions.get(0).getY(), positions.get(1).getY());
         int maxZ = Math.max(positions.get(0).getZ(), positions.get(1).getZ());
 
-        return new CuboidVolume(world, new Vector3i(minX, minY, minZ), new Vector3i(maxX, maxY, maxZ));
+        positions.set(0, new Vector3i(minX, minY, minZ));
+        positions.set(1, new Vector3i(maxX, maxY, maxZ));
+    }
+
+    @Override
+    public CuboidVolume getZoneVolume() {
+        return new CuboidVolume(world, positions.get(0), positions.get(1));
     }
 }

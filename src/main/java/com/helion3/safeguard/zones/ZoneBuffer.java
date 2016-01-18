@@ -24,6 +24,7 @@
 package com.helion3.safeguard.zones;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.helion3.safeguard.util.Vector3iTransformer;
 import com.helion3.safeguard.volumes.CuboidVolume;
 
 public interface ZoneBuffer {
@@ -44,4 +45,10 @@ public interface ZoneBuffer {
      * @return CuboidVolume
      */
     public CuboidVolume getZoneVolume();
+
+    /**
+     * Transform each position.
+     */
+    public void transformMinPosition(Vector3iTransformer transformer);
+    public void transformMaxPosition(Vector3iTransformer transformer);
 }

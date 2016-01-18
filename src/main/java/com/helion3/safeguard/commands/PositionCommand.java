@@ -23,82 +23,112 @@
  */
 package com.helion3.safeguard.commands;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.args.CommandContext;
+import org.spongepowered.api.command.spec.CommandExecutor;
+import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
+import com.flowpowered.math.vector.Vector3i;
 import com.helion3.safeguard.SafeGuard;
 import com.helion3.safeguard.util.Format;
 import com.helion3.safeguard.zones.CubicalZoneBuffer;
 import com.helion3.safeguard.zones.ZoneBuffer;
 
-public class PositionCommand implements CommandCallable {
-    @Override
-    public CommandResult process(CommandSource source, String arguments) throws CommandException {
-        if (!(source instanceof Player)) {
-            source.sendMessage(Format.error("Command usable only by a player."));
-            return CommandResult.empty();
-        }
+public class PositionCommand {
+    public static CommandSpec getCommand() {
+        return CommandSpec.builder()
+        .description(Text.of("Mark a position as a zone boundary."))
+        .permission("safeguard.create")
+        .executor(new CommandExecutor() {
+            @Override
+            public CommandResult execute(CommandSource source, CommandContext args) throws CommandException {
+                if (!(source instanceof Player)) {
+                    source.sendMessage(Format.error("Command usable only by a player."));
+                    return CommandResult.empty();
+                }
 
-        Player player = (Player) source;
-        ZoneBuffer buffer;
+                Player player = (Player) source;
+                ZoneBuffer buffer;
 
-        // Get or create a buffer
-        if (SafeGuard.getActiveBuffers().containsKey(player)) {
-            buffer = SafeGuard.getActiveBuffers().get(player);
-        } else {
-            // Only currently supported shape
-            buffer = new CubicalZoneBuffer(player.getWorld());
-        }
+                // Get or create a buffer
+                if (SafeGuard.getActiveBuffers().containsKey(player)) {
+                    buffer = SafeGuard.getActiveBuffers().get(player);
+                } else {
+                    // Only currently supported shape
+                    buffer = new CubicalZoneBuffer(player.getWorld());
+                }
 
-        if (buffer.isComplete()) {
-            source.sendMessage(Format.error("All positions set. Next use /sg zone create (zone name)"));
-        } else {
-            // Add current position
-            buffer.addPosition(player.getLocation().getBlockPosition());
+                if (buffer.isComplete()) {
+                    source.sendMessage(Format.error("All positions set. Next use /sg zone create (zone name)"));
+                } else {
+                    // Add current position
+                    buffer.addPosition(player.getLocation().getBlockPosition());
 
-            // Store
-            SafeGuard.getActiveBuffers().put(player, buffer);
+                    // Store
+                    SafeGuard.getActiveBuffers().put(player, buffer);
 
-            // Message
-            if (buffer.isComplete()) {
-                source.sendMessage(Format.success("Added position. Shape complete, use /sg zone create (zone name)"));
-            } else {
-                source.sendMessage(Format.success("Added position to buffer."));
+                    // Message
+                    if (buffer.isComplete()) {
+                        source.sendMessage(Format.success("Added position. Shape complete, use /sg zone create (zone name)"));
+                    } else {
+                        source.sendMessage(Format.success("Added position to buffer."));
+                    }
+                }
+
+                return CommandResult.success();
             }
-        }
-
-        return CommandResult.success();
+        })
+        .child(getFullheightCommand(), "fullheight")
+        .build();
     }
 
-    @Override
-    public List<String> getSuggestions(CommandSource source, String arguments) throws CommandException {
-        return null;
-    }
+    protected static CommandSpec getFullheightCommand() {
+        return CommandSpec.builder()
+        .description(Text.of("Expand current buffer positions to the full map height."))
+        .permission("safeguard.create")
+        .executor(new CommandExecutor() {
+            @Override
+            public CommandResult execute(CommandSource source, CommandContext args) throws CommandException {
+                if (!(source instanceof Player)) {
+                    source.sendMessage(Format.error("Command usable only by a player."));
+                    return CommandResult.empty();
+                }
 
-    @Override
-    public boolean testPermission(CommandSource source) {
-        return source.hasPermission("safeguard.create");
-    }
+                Player player = (Player) source;
 
-    @Override
-    public Optional<Text> getShortDescription(CommandSource source) {
-        return Optional.of(Text.of("Mark a position as a zone boundary."));
-    }
+                // Get buffer
+                if (!SafeGuard.getActiveBuffers().containsKey(player)) {
+                    source.sendMessage(Format.error("You haven't set any positions yet."));
+                    return CommandResult.empty();
+                }
 
-    @Override
-    public Optional<Text> getHelp(CommandSource source) {
-        return Optional.of(Text.of("Create a shape with positions."));
-    }
+                ZoneBuffer buffer = SafeGuard.getActiveBuffers().get(player);
+                if (!buffer.isComplete()) {
+                    source.sendMessage(Format.error("Buffer is incomplete. Please finish it first."));
+                    return CommandResult.empty();
+                }
 
-    @Override
-    public Text getUsage(CommandSource source) {
-        return Text.of("/sg pos");
+                int oldSize = buffer.getZoneVolume().getVolume();
+
+                buffer.transformMinPosition((Vector3i pos) -> {
+                    return new Vector3i(pos.getX(), 0, pos.getY());
+                });
+
+                buffer.transformMaxPosition((Vector3i pos) -> {
+                    return new Vector3i(pos.getX(), player.getWorld().getBlockMax().getY(), pos.getY());
+                });
+
+                int newSize = buffer.getZoneVolume().getVolume();
+
+                source.sendMessage(Format.success("Expanded to full height. " + (newSize - oldSize) + " new blocks."));
+
+                return CommandResult.success();
+            }
+        })
+        .build();
     }
 }

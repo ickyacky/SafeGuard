@@ -47,23 +47,22 @@ public class SafeGuardCommands {
      * @return
      */
     public static CommandSpec getCommand() {
-        // Build child commands
         ImmutableMap.Builder<List<String>, CommandCallable> builder = ImmutableMap.builder();
-        builder.put(ImmutableList.of("pos", "position"), new PositionCommand());
+        builder.put(ImmutableList.of("pos", "position"), PositionCommand.getCommand());
         builder.put(ImmutableList.of("zone"), ZoneCommands.getCommand());
 
         return CommandSpec.builder()
-                .executor(new CommandExecutor() {
-                    @Override
-                    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-                        src.sendMessage(Text.of(
-                            Format.heading(TextColors.GRAY, "By ", TextColors.GOLD, "viveleroi.\n"),
-                            TextColors.GRAY, "Help: ", TextColors.WHITE, "/pr ?\n",
-                            TextColors.GRAY, "IRC: ", TextColors.WHITE, "irc.esper.net #helion3\n"
-                        ));
-                        return CommandResult.empty();
-                    }
-                })
-                .children(builder.build()).build();
+        .executor(new CommandExecutor() {
+            @Override
+            public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+                src.sendMessage(Text.of(
+                    Format.heading(TextColors.GRAY, "By ", TextColors.GOLD, "viveleroi.\n"),
+                    TextColors.GRAY, "Help: ", TextColors.WHITE, "/pr ?\n",
+                    TextColors.GRAY, "IRC: ", TextColors.WHITE, "irc.esper.net #helion3\n"
+                ));
+                return CommandResult.empty();
+            }
+        })
+        .children(builder.build()).build();
     }
 }
