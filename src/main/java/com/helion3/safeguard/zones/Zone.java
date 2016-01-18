@@ -94,6 +94,10 @@ public class Zone implements DataSerializable {
         return false;
     }
 
+    public boolean deny(GameProfile profile) {
+        return permissions.remove(profile) != null;
+    }
+
     public Map<GameProfile, ZonePermissions> getPermissions() {
         return permissions;
     }
@@ -182,17 +186,15 @@ public class Zone implements DataSerializable {
 
         // Permissions
         Optional<DataView> optionalPermissions = data.getView(DataQueries.Permissions);
-        if (!optionalPermissions.isPresent()) {
-            throw new Exception("Invalid zone data: permissions list");
-        }
+        if (optionalPermissions.isPresent()) {
+            for (DataQuery query : optionalPermissions.get().getKeys(false)) {
+                UUID uuid = UUID.fromString(query.toString());
 
-        for (DataQuery query : optionalPermissions.get().getKeys(false)) {
-            UUID uuid = UUID.fromString(query.toString());
+                Future<GameProfile> future = SafeGuard.getGame().getServer().getGameProfileManager().get(uuid);
+                ZonePermissions perms = ZonePermissions.from(optionalPermissions.get().getView(query).get());
 
-            Future<GameProfile> future = SafeGuard.getGame().getServer().getGameProfileManager().get(uuid);
-            ZonePermissions perms = ZonePermissions.from(optionalPermissions.get().getView(query).get());
-
-            zone.allow(future.get(), perms);
+                zone.allow(future.get(), perms);
+            }
         }
 
         return zone;
