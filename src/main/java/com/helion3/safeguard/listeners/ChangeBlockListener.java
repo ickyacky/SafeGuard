@@ -33,7 +33,6 @@ import org.spongepowered.api.event.block.ChangeBlockEvent;
 
 import com.helion3.safeguard.SafeGuard;
 import com.helion3.safeguard.util.Format;
-import com.helion3.safeguard.zones.Zone;
 
 public class ChangeBlockListener {
     @Listener
@@ -46,12 +45,10 @@ public class ChangeBlockListener {
         Player player = optionalPlayer.get();
 
         for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-            for (Zone zone : SafeGuard.getZoneManager().getZones()) {
-                if (zone.getVolume().contains(transaction.getOriginal().getLocation().get())) {
-                    player.sendMessage(Format.error("Sorry, this zone doesn't allow you to do that."));
-                    event.setCancelled(true);
-                    break;
-                }
+            if (SafeGuard.getZoneManager().zoneExists(transaction.getOriginal().getLocation().get())) {
+                player.sendMessage(Format.error("Sorry, this zone doesn't allow you to do that."));
+                event.setCancelled(true);
+                break;
             }
         }
     }

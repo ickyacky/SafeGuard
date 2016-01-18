@@ -103,6 +103,6 @@ public class ZoneCreateCommand implements CommandCallable {
 
     @Override
     public Text getUsage(CommandSource source) {
-        return Text.of("/sg pos");
+        return Text.of("/sg zone create (name)");
     }
 }

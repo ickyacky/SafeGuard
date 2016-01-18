@@ -50,7 +50,7 @@ public class SafeGuardCommands {
         // Build child commands
         ImmutableMap.Builder<List<String>, CommandCallable> builder = ImmutableMap.builder();
         builder.put(ImmutableList.of("pos", "position"), new PositionCommand());
-        builder.put(ImmutableList.of("create"), new ZoneCreateCommand());
+        builder.put(ImmutableList.of("zone"), ZoneCommands.getCommand());
 
         return CommandSpec.builder()
                 .executor(new CommandExecutor() {

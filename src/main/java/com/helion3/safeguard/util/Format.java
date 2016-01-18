@@ -48,7 +48,7 @@ public class Format {
      */
     public static Text error(Text content) {
         checkNotNull(content);
-        return Text.of(TextColors.GOLD, namespace, " // ", TextColors.RED, content);
+        return Text.of(TextColors.GOLD, namespace, ": ", TextColors.RED, content);
     }
 
     /**
@@ -67,7 +67,7 @@ public class Format {
      */
     public static Text heading(Text content) {
         checkNotNull(content);
-        return Text.of(TextColors.GOLD, namespace, " // ", TextColors.WHITE, content);
+        return Text.of(TextColors.GOLD, namespace, ": ", TextColors.WHITE, content);
     }
 
     /**
@@ -105,7 +105,7 @@ public class Format {
      */
     public static Text subduedHeading(Text content) {
         checkNotNull(content);
-        return Text.of(TextColors.GOLD, namespace, " // ", TextColors.GRAY, content);
+        return Text.of(TextColors.GOLD, namespace, ": ", TextColors.GRAY, content);
     }
 
     /**
@@ -124,25 +124,25 @@ public class Format {
      */
     public static Text success(Text content) {
         checkNotNull(content);
-        return Text.of(TextColors.GOLD, namespace, " // ", TextColors.GREEN, content);
+        return Text.of(TextColors.GOLD, namespace, ": ", TextColors.GREEN, content);
     }
 
     /**
-     * Returns content formatted as a bonus message
+     * Returns content formatted as a subdued message
      * @param content Object[] Content to format
      * @return Text Formatted content.
      */
-    public static Text bonus(Object...objects) {
-        return bonus(Text.of(objects));
+    public static Text subdued(Object...objects) {
+        return subdued(Text.of(objects));
     }
 
     /**
-     * Returns content formatted as a bonus string. Usually used
+     * Returns content formatted as a subdued string. Usually used
      * for fun wording inside other messages.
      * @param content  Text Content to format
      * @return Text Formatted content.
      */
-    public static Text bonus(Text content) {
+    public static Text subdued(Text content) {
         checkNotNull(content);
         return Text.of(TextColors.GRAY, content);
     }

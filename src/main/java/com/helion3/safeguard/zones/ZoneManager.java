@@ -26,6 +26,11 @@ package com.helion3.safeguard.zones;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
+
+import com.helion3.safeguard.SafeGuard;
+
 public class ZoneManager {
     private final List<Zone> zones = new ArrayList<Zone>();
 
@@ -43,5 +48,38 @@ public class ZoneManager {
      */
     public List<Zone> getZones() {
         return zones;
+    }
+
+    /**
+     * Get all zones.
+     * @return List of zones.
+     */
+    public List<Zone> getZones(Location<World> location) {
+        List<Zone> matches = new ArrayList<Zone>();
+
+        for (Zone zone : SafeGuard.getZoneManager().getZones()) {
+            if (zone.getVolume().contains(location)) {
+                matches.add(zone);
+            }
+        }
+
+        return matches;
+    }
+
+    /**
+     * Get all zones.
+     * @return List of zones.
+     */
+    public boolean zoneExists(Location<World> location) {
+        boolean exists = false;
+
+        for (Zone zone : SafeGuard.getZoneManager().getZones()) {
+            if (zone.getVolume().contains(location)) {
+                exists = true;
+                break;
+            }
+        }
+
+        return exists;
     }
 }

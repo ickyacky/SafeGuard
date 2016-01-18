@@ -17,6 +17,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.helion3.safeguard.SafeGuard;
 
 public class DataUtil {
@@ -121,13 +122,47 @@ public class DataUtil {
 
                 List<Object> list = new ArrayList<Object>();
                 while (iterator.hasNext()) {
-                    list.add(iterator.next());
+                    Object child = iterator.next();
+
+                    if (child instanceof JsonPrimitive) {
+                        JsonPrimitive primitive = (JsonPrimitive) child;
+
+                        if (primitive.isString()) {
+                            list.add(primitive.getAsString());
+                        }
+                        else if (primitive.isNumber()) {
+                            // @todo may be wrong format. how do we handle?
+                            list.add(primitive.getAsInt());
+                        }
+                        else if (primitive.isBoolean()) {
+                            list.add(primitive.getAsBoolean());
+                        }
+                        else {
+                            SafeGuard.getLogger().error("Unhandled list JsonPrimitive data type: " + primitive.toString());
+                        }
+                    }
                 }
 
                 result.set(keyQuery, list);
             }
             else {
-                result.set(keyQuery, object);
+                if (object instanceof JsonPrimitive) {
+                    JsonPrimitive primitive = (JsonPrimitive) object;
+
+                    if (primitive.isString()) {
+                        result.set(keyQuery, primitive.getAsString());
+                    }
+                    else if (primitive.isNumber()) {
+                        // @todo may be wrong format. how do we handle?
+                        result.set(keyQuery, primitive.getAsInt());
+                    }
+                    else if (primitive.isBoolean()) {
+                        result.set(keyQuery, primitive.getAsBoolean());
+                    }
+                    else {
+                        SafeGuard.getLogger().error("Unhandled JsonPrimitive data type: " + primitive.toString());
+                    }
+                }
             }
         }
 

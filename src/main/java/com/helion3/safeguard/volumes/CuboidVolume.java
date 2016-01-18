@@ -15,14 +15,8 @@ import com.helion3.safeguard.SafeGuard;
 import com.helion3.safeguard.util.DataQueries;
 
 public class CuboidVolume extends Volume {
-    private final Extent extent;
-    private final Vector3i min;
-    private final Vector3i max;
-
     public CuboidVolume(Extent extent, Vector3i min, Vector3i max) {
-        this.extent = extent;
-        this.min = min;
-        this.max = max;
+        super(extent, min, max);
     }
 
     @Override

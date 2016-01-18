@@ -68,6 +68,14 @@ public class Zone implements DataSerializable {
         return owners.contains(profile);
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public List<GameProfile> getOwners() {
+        return owners;
+    }
+
     @Override
     public int getContentVersion() {
         return 1;

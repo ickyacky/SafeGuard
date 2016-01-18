@@ -58,7 +58,7 @@ public class PositionCommand implements CommandCallable {
         }
 
         if (buffer.isComplete()) {
-            source.sendMessage(Format.error("All positions set. Next use /sg create (zone name)"));
+            source.sendMessage(Format.error("All positions set. Next use /sg zone create (zone name)"));
         } else {
             // Add current position
             buffer.addPosition(player.getLocation().getBlockPosition());
@@ -68,7 +68,7 @@ public class PositionCommand implements CommandCallable {
 
             // Message
             if (buffer.isComplete()) {
-                source.sendMessage(Format.success("Added position. Shape complete, use /sg create (zone name)"));
+                source.sendMessage(Format.success("Added position. Shape complete, use /sg zone create (zone name)"));
             } else {
                 source.sendMessage(Format.success("Added position to buffer."));
             }
