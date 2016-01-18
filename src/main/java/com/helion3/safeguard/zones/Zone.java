@@ -36,6 +36,8 @@ import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.MemoryDataContainer;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Event;
 import org.spongepowered.api.profile.GameProfile;
 
 import com.helion3.safeguard.SafeGuard;
@@ -58,6 +60,14 @@ public class Zone implements DataSerializable {
 
     public void addOwner(GameProfile profile) {
         owners.add(profile);
+    }
+
+    public boolean allows(Player player, Event event) {
+        if (owners.contains(player.getProfile())) {
+            return true;
+        }
+
+        return false;
     }
 
     public Volume getVolume() {

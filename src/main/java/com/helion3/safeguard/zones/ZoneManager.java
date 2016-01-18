@@ -26,6 +26,8 @@ package com.helion3.safeguard.zones;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Event;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -51,7 +53,31 @@ public class ZoneManager {
     }
 
     /**
-     * Get all zones.
+     * Is the player allowed to perform an event at this location.
+     * @param player Player
+     * @param location Location
+     * @return
+     */
+    public boolean allows(Player player, Event event, Location<World> location) {
+        boolean allowed = false;
+
+        List<Zone> zones = getZones(location);
+        if (!zones.isEmpty()) {
+            for (Zone zone : zones) {
+                if (zone.allows(player, event)) {
+                    allowed = true;
+                    break;
+                }
+            }
+        } else {
+            allowed = true;
+        }
+
+        return allowed;
+    }
+
+    /**
+     * Get all zones for a given location.
      * @return List of zones.
      */
     public List<Zone> getZones(Location<World> location) {
@@ -64,22 +90,5 @@ public class ZoneManager {
         }
 
         return matches;
-    }
-
-    /**
-     * Get all zones.
-     * @return List of zones.
-     */
-    public boolean zoneExists(Location<World> location) {
-        boolean exists = false;
-
-        for (Zone zone : SafeGuard.getZoneManager().getZones()) {
-            if (zone.getVolume().contains(location)) {
-                exists = true;
-                break;
-            }
-        }
-
-        return exists;
     }
 }

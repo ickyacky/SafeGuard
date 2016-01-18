@@ -45,7 +45,7 @@ public class ChangeBlockListener {
         Player player = optionalPlayer.get();
 
         for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-            if (SafeGuard.getZoneManager().zoneExists(transaction.getOriginal().getLocation().get())) {
+            if (!SafeGuard.getZoneManager().allows(player, event, transaction.getOriginal().getLocation().get())) {
                 player.sendMessage(Format.error("Sorry, this zone doesn't allow you to do that."));
                 event.setCancelled(true);
                 break;
