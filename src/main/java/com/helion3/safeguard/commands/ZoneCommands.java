@@ -29,6 +29,7 @@ public class ZoneCommands {
         // Build child commands
         ImmutableMap.Builder<List<String>, CommandCallable> builder = ImmutableMap.builder();
         builder.put(ImmutableList.of("create"), new ZoneCreateCommand());
+        builder.put(ImmutableList.of("allow"), new ZoneAllowCommand());
 
         return CommandSpec.builder()
                 .executor(new CommandExecutor() {

@@ -27,12 +27,16 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
 import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.MemoryDataContainer;
@@ -50,16 +54,29 @@ public class Zone implements DataSerializable {
     private final String name;
     private final Volume volume;
     private final List<GameProfile> owners = new ArrayList<GameProfile>();
+    private final Map<GameProfile, ZonePermissions> permissions = new HashMap<GameProfile, ZonePermissions>();
     private final UUID uuid;
 
     public Zone(String name, Volume volume) {
+        this(UUID.randomUUID(), name, volume);
+    }
+
+    public Zone(UUID uuid, String name, Volume volume) {
         this.name = name;
         this.volume = volume;
-        this.uuid = UUID.randomUUID();
+        this.uuid = uuid;
     }
 
     public void addOwner(GameProfile profile) {
         owners.add(profile);
+    }
+
+    public void allow(GameProfile profile) {
+        allow(profile, new ZonePermissions());
+    }
+
+    public void allow(GameProfile profile, ZonePermissions zonePermissions) {
+        permissions.put(profile, zonePermissions);
     }
 
     public boolean allows(Player player, Event event) {
@@ -67,7 +84,18 @@ public class Zone implements DataSerializable {
             return true;
         }
 
+        if (permissions.containsKey(player.getProfile())) {
+//            ZonePermissions perms = permissions.get(player.getProfile());
+
+            // @todo check event/flags
+            return true;
+        }
+
         return false;
+    }
+
+    public Map<GameProfile, ZonePermissions> getPermissions() {
+        return permissions;
     }
 
     public Volume getVolume() {
@@ -106,6 +134,8 @@ public class Zone implements DataSerializable {
                 file.createNewFile();
             }
 
+            System.out.println("saving zone...");
+
             FileWriter writer = new FileWriter(filePath);
             writer.write(DataUtil.jsonFromDataView(toContainer()).toString());
             writer.close();
@@ -115,6 +145,11 @@ public class Zone implements DataSerializable {
     }
 
     public static Zone from(DataContainer data) throws Exception {
+        Optional<String> optionalUuid = data.getString(DataQueries.Uuid);
+        if (!optionalUuid.isPresent()) {
+            throw new Exception("Invalid zone data: uuid");
+        }
+
         Optional<String> optionalName = data.getString(DataQueries.ZoneName);
         if (!optionalName.isPresent()) {
             throw new Exception("Invalid zone data: name");
@@ -128,8 +163,8 @@ public class Zone implements DataSerializable {
         // @todo need way to determine specific type
         Volume volume = CuboidVolume.from(optionalVolume.get());
 
-        // Create a zone
-        Zone zone = new Zone(optionalName.get(), volume);
+        // Restore zone object
+        Zone zone = new Zone(UUID.fromString(optionalUuid.get()), optionalName.get(), volume);
 
         // Owners
         Optional<List<?>> optionalOwners = data.getList(DataQueries.Owners);
@@ -145,6 +180,21 @@ public class Zone implements DataSerializable {
             }
         }
 
+        // Permissions
+        Optional<DataView> optionalPermissions = data.getView(DataQueries.Permissions);
+        if (!optionalPermissions.isPresent()) {
+            throw new Exception("Invalid zone data: permissions list");
+        }
+
+        for (DataQuery query : optionalPermissions.get().getKeys(false)) {
+            UUID uuid = UUID.fromString(query.toString());
+
+            Future<GameProfile> future = SafeGuard.getGame().getServer().getGameProfileManager().get(uuid);
+            ZonePermissions perms = ZonePermissions.from(optionalPermissions.get().getView(query).get());
+
+            zone.allow(future.get(), perms);
+        }
+
         return zone;
     }
 
@@ -156,11 +206,22 @@ public class Zone implements DataSerializable {
         }
 
         DataContainer data = new MemoryDataContainer();
+        data.set(DataQueries.Uuid, uuid.toString());
         data.set(DataQueries.ZoneName, name);
         data.set(DataQueries.Owners, ownerContainers);
 
+        // Zone permissions
+        Map<String, DataContainer> profileMap = new HashMap<String, DataContainer>();
+        for (Entry<GameProfile, ZonePermissions> entry : permissions.entrySet()) {
+            profileMap.put(entry.getKey().getUniqueId().toString(), entry.getValue().toContainer());
+        }
+
+        data.set(DataQueries.Permissions, profileMap);
+
         // Volume
         data.set(DataQueries.Volume, volume.toContainer());
+
+        System.out.println(DataUtil.jsonFromDataView(data));
 
         return data;
     }

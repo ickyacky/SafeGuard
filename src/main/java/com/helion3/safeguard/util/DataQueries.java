@@ -6,6 +6,8 @@ public class DataQueries {
     public final static DataQuery Min = DataQuery.of("Min");
     public final static DataQuery Max = DataQuery.of("Max");
     public final static DataQuery Owners = DataQuery.of("Owners");
+    public final static DataQuery Permissions = DataQuery.of("Permissions");
+    public final static DataQuery Uuid = DataQuery.of("Uuid");
     public final static DataQuery Volume = DataQuery.of("Volume");
     public final static DataQuery World = DataQuery.of("World");
     public final static DataQuery X = DataQuery.of("X");
