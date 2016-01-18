@@ -24,20 +24,29 @@
 package com.helion3.safeguard;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.config.DefaultConfig;
+import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import com.helion3.safeguard.commands.SafeGuardCommands;
 import com.helion3.safeguard.listeners.ChangeBlockListener;
+import com.helion3.safeguard.util.DataUtil;
+import com.helion3.safeguard.zones.Zone;
 import com.helion3.safeguard.zones.ZoneBuffer;
 import com.helion3.safeguard.zones.ZoneManager;
 
@@ -65,6 +74,12 @@ public class SafeGuard {
     public void onServerStart(GameStartedServerEvent event) {
         parentDirectory = defaultConfig.getParentFile();
 
+        try {
+            loadZones();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         // Commands
         game.getCommandManager().register(this, SafeGuardCommands.getCommand(), "sg", "safeguard");
 
@@ -72,6 +87,14 @@ public class SafeGuard {
         game.getEventManager().registerListeners(this, new ChangeBlockListener());
 
         logger.info("SafeGuard started. Your haven is safe.");
+    }
+
+    /**
+     *
+     * @return
+     */
+    public static Game getGame() {
+        return game;
     }
 
     /**
@@ -123,5 +146,31 @@ public class SafeGuard {
      */
     public static ZoneManager getZoneManager() {
         return zoneManager;
+    }
+
+    /**
+     * Loads zones from save files.
+     * @throws IOException
+     */
+    protected void loadZones() throws IOException {
+        Files.walk(Paths.get(parentDirectory.getAbsolutePath() + "/zones")).forEach(filePath -> {
+            if (Files.isRegularFile(filePath) && filePath.toString().endsWith(".json")) {
+                try {
+                    FileReader reader = new FileReader(filePath.toString());
+                    JsonObject json = new JsonParser().parse(reader).getAsJsonObject();
+
+                    // Convert to a data container
+                    DataContainer data = DataUtil.jsonToDataContainer(json);
+
+                    // Create a zone
+                    zoneManager.add(Zone.from(data));
+
+                    reader.close();
+                } catch (Exception e) {
+                    logger.error("Json Exception for file " + filePath.toString());
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

@@ -28,16 +28,20 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.Future;
 
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataSerializable;
+import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.MemoryDataContainer;
 import org.spongepowered.api.profile.GameProfile;
 
 import com.helion3.safeguard.SafeGuard;
 import com.helion3.safeguard.util.DataQueries;
 import com.helion3.safeguard.util.DataUtil;
+import com.helion3.safeguard.volumes.CuboidVolume;
 import com.helion3.safeguard.volumes.Volume;
 
 public class Zone implements DataSerializable {
@@ -90,6 +94,40 @@ public class Zone implements DataSerializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static Zone from(DataContainer data) throws Exception {
+        Optional<String> optionalName = data.getString(DataQueries.ZoneName);
+        if (!optionalName.isPresent()) {
+            throw new Exception("Invalid zone data: name");
+        }
+
+        Optional<DataView> optionalVolume = data.getView(DataQueries.Volume);
+        if (!optionalVolume.isPresent()) {
+            throw new Exception("Invalid zone data: volume");
+        }
+
+        // @todo need way to determine specific type
+        Volume volume = CuboidVolume.from(optionalVolume.get());
+
+        // Create a zone
+        Zone zone = new Zone(optionalName.get(), volume);
+
+        // Owners
+        Optional<List<?>> optionalOwners = data.getList(DataQueries.Owners);
+        if (!optionalOwners.isPresent()) {
+            throw new Exception("Invalid zone data: owners list");
+        }
+
+        for (Object object : optionalOwners.get()) {
+            if (object instanceof String) {
+                UUID uuid = UUID.fromString((String) object);
+                Future<GameProfile> future = SafeGuard.getGame().getServer().getGameProfileManager().get(uuid);
+                zone.addOwner(future.get());
+            }
+        }
+
+        return zone;
     }
 
     @Override

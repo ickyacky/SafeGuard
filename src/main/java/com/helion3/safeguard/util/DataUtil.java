@@ -1,16 +1,21 @@
 package com.helion3.safeguard.util;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
+import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataView;
+import org.spongepowered.api.data.MemoryDataContainer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.helion3.safeguard.SafeGuard;
 
@@ -93,5 +98,39 @@ public class DataUtil {
         }
 
         return json;
+    }
+
+    /**
+     * Convert JSON to a DataContainer.
+     * @param json JsonObject
+     * @return DataContainer
+     */
+    public static DataContainer jsonToDataContainer(JsonObject json) {
+        DataContainer result = new MemoryDataContainer();
+
+        for (Entry<String, JsonElement> entry : json.entrySet()) {
+            DataQuery keyQuery = DataQuery.of(entry.getKey());
+            Object object = entry.getValue();
+
+            if (object instanceof JsonObject) {
+                result.set(keyQuery, jsonToDataContainer((JsonObject) object));
+            }
+            else if (object instanceof JsonArray) {
+                JsonArray array = (JsonArray) object;
+                Iterator<JsonElement> iterator = array.iterator();
+
+                List<Object> list = new ArrayList<Object>();
+                while (iterator.hasNext()) {
+                    list.add(iterator.next());
+                }
+
+                result.set(keyQuery, list);
+            }
+            else {
+                result.set(keyQuery, object);
+            }
+        }
+
+        return result;
     }
 }
