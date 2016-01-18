@@ -31,7 +31,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 
-import com.flowpowered.math.vector.Vector3d;
 import com.helion3.safeguard.SafeGuard;
 import com.helion3.safeguard.util.Format;
 import com.helion3.safeguard.zones.Zone;
@@ -47,10 +46,9 @@ public class ChangeBlockListener {
         Player player = optionalPlayer.get();
 
         for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-            Vector3d position = transaction.getOriginal().getLocation().get().getPosition();
-
             for (Zone zone : SafeGuard.getZoneManager().getZones()) {
-                if (zone.getVolume().containsBlock(position.toInt())) {
+                System.out.println("checking zone...");
+                if (zone.getVolume().contains(transaction.getOriginal().getLocation().get())) {
                     player.sendMessage(Format.error("Sorry, this zone doesn't allow you to do that."));
                     event.setCancelled(true);
                     break;

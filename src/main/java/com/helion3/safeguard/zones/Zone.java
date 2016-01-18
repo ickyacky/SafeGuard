@@ -34,25 +34,21 @@ import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.MemoryDataContainer;
 import org.spongepowered.api.profile.GameProfile;
-import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.extent.MutableBlockVolume;
 
 import com.helion3.safeguard.SafeGuard;
 import com.helion3.safeguard.util.DataQueries;
 import com.helion3.safeguard.util.DataUtil;
-
+import com.helion3.safeguard.volumes.Volume;
 
 public class Zone implements DataSerializable {
     private final String name;
-    private final MutableBlockVolume volume;
-    private final World world;
+    private final Volume volume;
     private final List<GameProfile> owners = new ArrayList<GameProfile>();
     private final UUID uuid;
 
-    public Zone(String name, World world, MutableBlockVolume volume) {
+    public Zone(String name, Volume volume) {
         this.name = name;
         this.volume = volume;
-        this.world = world;
         this.uuid = UUID.randomUUID();
     }
 
@@ -60,7 +56,7 @@ public class Zone implements DataSerializable {
         owners.add(profile);
     }
 
-    public MutableBlockVolume getVolume() {
+    public Volume getVolume() {
         return volume;
     }
 
@@ -108,26 +104,7 @@ public class Zone implements DataSerializable {
         data.set(DataQueries.Owners, ownerContainers);
 
         // Volume
-        DataContainer volumeData = new MemoryDataContainer();
-
-            // Min Coord
-            DataContainer min = new MemoryDataContainer();
-            min.set(DataQueries.X, volume.getBlockMin().getX());
-            min.set(DataQueries.Y, volume.getBlockMin().getY());
-            min.set(DataQueries.Z, volume.getBlockMin().getZ());
-            volumeData.set(DataQueries.Min, min);
-
-            // Max Coord
-            DataContainer max = new MemoryDataContainer();
-            max.set(DataQueries.X, volume.getBlockMax().getX());
-            max.set(DataQueries.Y, volume.getBlockMax().getY());
-            max.set(DataQueries.Z, volume.getBlockMax().getZ());
-            volumeData.set(DataQueries.Max, max);
-
-        data.set(DataQueries.Volume, volumeData);
-
-        // World
-        data.set(DataQueries.World, world.getUniqueId().toString());
+        data.set(DataQueries.Volume, volume.toContainer());
 
         return data;
     }

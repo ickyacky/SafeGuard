@@ -23,9 +23,8 @@
  */
 package com.helion3.safeguard.zones;
 
-import org.spongepowered.api.world.extent.MutableBlockVolume;
-
 import com.flowpowered.math.vector.Vector3i;
+import com.helion3.safeguard.volumes.CuboidVolume;
 
 public interface ZoneBuffer {
     /**
@@ -42,7 +41,7 @@ public interface ZoneBuffer {
 
     /**
      * Build a final zone shape.
-     * @return ZoneShape
+     * @return CuboidVolume
      */
-    public MutableBlockVolume getZoneVolume();
+    public CuboidVolume getZoneVolume();
 }

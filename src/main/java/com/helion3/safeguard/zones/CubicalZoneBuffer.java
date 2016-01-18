@@ -27,9 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.extent.MutableBlockVolume;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.helion3.safeguard.volumes.CuboidVolume;
 
 public class CubicalZoneBuffer implements ZoneBuffer {
     private List<Vector3i> positions = new ArrayList<Vector3i>();
@@ -50,7 +50,7 @@ public class CubicalZoneBuffer implements ZoneBuffer {
     }
 
     @Override
-    public MutableBlockVolume getZoneVolume() {
-        return world.getBlockView(positions.get(0), positions.get(1));
+    public CuboidVolume getZoneVolume() {
+        return new CuboidVolume(world, positions.get(0), positions.get(1));
     }
 }

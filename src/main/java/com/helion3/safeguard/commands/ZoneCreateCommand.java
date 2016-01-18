@@ -69,7 +69,7 @@ public class ZoneCreateCommand implements CommandCallable {
         SafeGuard.getActiveBuffers().remove(player);
 
         // Create a new zone
-        Zone zone = new Zone(args[0], player.getWorld(), buffer.getZoneVolume());
+        Zone zone = new Zone(args[0], buffer.getZoneVolume());
         zone.addOwner(player.getProfile());
 
         // Publish and save
