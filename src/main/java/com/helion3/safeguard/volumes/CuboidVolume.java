@@ -48,14 +48,14 @@ public class CuboidVolume extends Volume {
         minData.set(DataQueries.X, min.getX());
         minData.set(DataQueries.Y, min.getY());
         minData.set(DataQueries.Z, min.getZ());
-        data.set(DataQueries.Min, min);
+        data.set(DataQueries.Min, minData);
 
         // Max Coord
         DataContainer maxData = new MemoryDataContainer();
         maxData.set(DataQueries.X, max.getX());
         maxData.set(DataQueries.Y, max.getY());
         maxData.set(DataQueries.Z, max.getZ());
-        data.set(DataQueries.Max, max);
+        data.set(DataQueries.Max, maxData);
 
         // World
         data.set(DataQueries.World, extent.getUniqueId().toString());
