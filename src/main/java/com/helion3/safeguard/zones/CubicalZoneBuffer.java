@@ -51,6 +51,14 @@ public class CubicalZoneBuffer implements ZoneBuffer {
 
     @Override
     public CuboidVolume getZoneVolume() {
-        return new CuboidVolume(world, positions.get(0), positions.get(1));
+        int minX = Math.min(positions.get(0).getX(), positions.get(1).getX());
+        int minY = Math.min(positions.get(0).getY(), positions.get(1).getY());
+        int minZ = Math.min(positions.get(0).getZ(), positions.get(1).getZ());
+
+        int maxX = Math.max(positions.get(0).getX(), positions.get(1).getX());
+        int maxY = Math.max(positions.get(0).getY(), positions.get(1).getY());
+        int maxZ = Math.max(positions.get(0).getZ(), positions.get(1).getZ());
+
+        return new CuboidVolume(world, new Vector3i(minX, minY, minZ), new Vector3i(maxX, maxY, maxZ));
     }
 }

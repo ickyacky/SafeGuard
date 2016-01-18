@@ -35,10 +35,9 @@ public abstract class Volume implements DataSerializable {
     }
 
     public int getVolume() {
-        // @todo clean this up
-        int xLength = Math.abs(Math.abs(min.getX()) - Math.abs(max.getX()));
-        int yLength = Math.abs(Math.abs(min.getY()) - Math.abs(max.getY()));
-        int zLength = Math.abs(Math.abs(min.getZ()) - Math.abs(max.getZ()));
+        int xLength = max.getX() - min.getX();
+        int yLength = max.getY() - min.getY();
+        int zLength = max.getZ() - min.getZ();
 
         return (xLength * yLength * zLength);
     }

@@ -25,9 +25,9 @@ public class CuboidVolume extends Volume {
 
         if (location.getExtent().equals(extent)) {
             Vector3i pos = location.getPosition().toInt();
-            contains = (Math.abs(min.getX()) <= Math.abs(pos.getX()) && Math.abs(max.getX()) >= Math.abs(pos.getX()) &&
-                        Math.abs(min.getY()) <= Math.abs(pos.getY()) && Math.abs(max.getY()) >= Math.abs(pos.getY()) &&
-                        Math.abs(min.getZ()) <= Math.abs(pos.getZ()) && Math.abs(max.getZ()) >= Math.abs(pos.getZ()));
+            contains = (min.getX() <= pos.getX() && max.getX() >= pos.getX() &&
+                        min.getY() <= pos.getY() && max.getY() >= pos.getY() &&
+                        min.getZ() <= pos.getZ() && max.getZ() >= pos.getZ());
         }
 
         return contains;
