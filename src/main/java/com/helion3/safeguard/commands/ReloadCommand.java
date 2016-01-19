@@ -23,9 +23,8 @@
  */
 package com.helion3.safeguard.commands;
 
-import java.util.List;
+import java.io.IOException;
 
-import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -33,37 +32,34 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import com.helion3.safeguard.SafeGuard;
 import com.helion3.safeguard.util.Format;
 
-public class SafeGuardCommands {
-    private SafeGuardCommands() {}
+public class ReloadCommand {
+    private ReloadCommand() {}
 
-    /**
-     * Build a complete command hierarchy
-     * @return
-     */
     public static CommandSpec getCommand() {
-        ImmutableMap.Builder<List<String>, CommandCallable> builder = ImmutableMap.builder();
-        builder.put(ImmutableList.of("pos", "position"), PositionCommand.getCommand());
-        builder.put(ImmutableList.of("zone"), ZoneCommands.getCommand());
-        builder.put(ImmutableList.of("reload"), ReloadCommand.getCommand());
-
         return CommandSpec.builder()
+        .description(Text.of("Reload config and zone files."))
+        .permission("safeguard.admin")
         .executor(new CommandExecutor() {
             @Override
-            public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-                src.sendMessage(Text.of(
-                    Format.heading(TextColors.GRAY, "By ", TextColors.GOLD, "viveleroi.\n"),
-                    TextColors.GRAY, "Help: ", TextColors.WHITE, "/pr ?\n",
-                    TextColors.GRAY, "IRC: ", TextColors.WHITE, "irc.esper.net #helion3\n"
-                ));
-                return CommandResult.empty();
+            public CommandResult execute(CommandSource source, CommandContext args) throws CommandException {
+                // Clear all zones in memory
+                SafeGuard.getZoneManager().clearAll();
+
+                // Reload zone files
+                try {
+                    SafeGuard.loadZones();
+                    source.sendMessage(Format.success("Reloaded configs and zone files."));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    source.sendMessage(Format.error(e.getMessage()));
+                }
+
+                return CommandResult.success();
             }
-        })
-        .children(builder.build()).build();
+        }).build();
     }
 }

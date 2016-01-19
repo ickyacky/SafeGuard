@@ -78,6 +78,13 @@ public class ZoneManager {
     }
 
     /**
+     * Clear all zones currently in memory.
+     */
+    public void clearAll() {
+        zones.clear();
+    }
+
+    /**
      * Get all zones for a given location.
      * @return List of zones.
      */

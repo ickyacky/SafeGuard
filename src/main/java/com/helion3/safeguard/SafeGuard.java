@@ -158,7 +158,7 @@ public class SafeGuard {
      * Loads zones from save files.
      * @throws IOException
      */
-    protected void loadZones() throws IOException {
+    public static void loadZones() throws IOException {
         File dir = new File(parentDirectory.getAbsolutePath() + "/zones");
         if (dir.exists()) {
             Files.walk(Paths.get(parentDirectory.getAbsolutePath() + "/zones")).forEach(filePath -> {
