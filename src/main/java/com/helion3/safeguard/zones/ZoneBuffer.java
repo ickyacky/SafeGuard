@@ -23,6 +23,8 @@
  */
 package com.helion3.safeguard.zones;
 
+import java.util.List;
+
 import com.flowpowered.math.vector.Vector3i;
 import com.helion3.safeguard.util.Vector3iTransformer;
 import com.helion3.safeguard.volumes.CuboidVolume;
@@ -33,6 +35,12 @@ public interface ZoneBuffer {
      * @param position
      */
     public void addPosition(Vector3i position);
+
+    /**
+     * Get all current positions.
+     * @return
+     */
+    public List<Vector3i> getPositions();
 
     /**
      * Determines whether the buffer has enough data for a shape.

@@ -23,6 +23,8 @@
  */
 package com.helion3.safeguard.commands;
 
+import java.util.Optional;
+
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -30,6 +32,8 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.service.permission.Subject;
+import org.spongepowered.api.service.permission.option.OptionSubject;
 import org.spongepowered.api.text.Text;
 
 import com.flowpowered.math.vector.Vector3i;
@@ -72,8 +76,37 @@ public class PositionCommand {
                 if (buffer.isComplete()) {
                     source.sendMessage(Format.error("All positions set. Next use /sg zone create (zone name)"));
                 } else {
+                    Subject subject = player.getContainingCollection().get(player.getIdentifier());
+                    int lengthLimit = 0;
+
+                    if (subject instanceof OptionSubject) {
+                        Optional<String> optionalLimit = ((OptionSubject) subject).getOption("zoneLengthLimit");
+                        if (optionalLimit.isPresent()) {
+                            lengthLimit = Integer.parseInt(optionalLimit.get());
+                        }
+                    }
+
+                    Vector3i newPosition = player.getLocation().getBlockPosition();
+
+                    boolean allowed = true;
+                    if (lengthLimit > 0 && buffer.getPositions().size() > 0) {
+                        Vector3i min = buffer.getPositions().get(0);
+
+                        if (Math.abs(Math.abs(min.getX()) - Math.abs(newPosition.getX())) > lengthLimit) {
+                            allowed = false;
+                        }
+                        else if (Math.abs(Math.abs(min.getZ()) - Math.abs(newPosition.getZ())) > lengthLimit) {
+                            allowed = false;
+                        }
+                    }
+
+                    if (!allowed) {
+                        source.sendMessage(Format.error("You are limited to a zone no large than " + lengthLimit + "x" + lengthLimit));
+                        return CommandResult.empty();
+                    }
+
                     // Add current position
-                    buffer.addPosition(player.getLocation().getBlockPosition());
+                    buffer.addPosition(newPosition);
 
                     // Store
                     SafeGuard.getActiveBuffers().put(player, buffer);

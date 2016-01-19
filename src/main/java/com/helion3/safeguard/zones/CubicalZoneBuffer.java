@@ -50,6 +50,11 @@ public class CubicalZoneBuffer implements ZoneBuffer {
     }
 
     @Override
+    public List<Vector3i> getPositions() {
+        return positions;
+    }
+
+    @Override
     public boolean isComplete() {
         return positions.size() == 2;
     }
