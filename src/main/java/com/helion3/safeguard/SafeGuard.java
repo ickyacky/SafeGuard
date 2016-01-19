@@ -47,6 +47,7 @@ import com.helion3.safeguard.commands.SafeGuardCommands;
 import com.helion3.safeguard.listeners.ChangeBlockListener;
 import com.helion3.safeguard.listeners.DamageEntityListener;
 import com.helion3.safeguard.listeners.DropItemListener;
+import com.helion3.safeguard.listeners.InteractInventoryListener;
 import com.helion3.safeguard.util.DataUtil;
 import com.helion3.safeguard.zones.Zone;
 import com.helion3.safeguard.zones.ZoneBuffer;
@@ -89,6 +90,7 @@ public class SafeGuard {
         game.getEventManager().registerListeners(this, new ChangeBlockListener());
         game.getEventManager().registerListeners(this, new DamageEntityListener());
         game.getEventManager().registerListeners(this, new DropItemListener());
+        game.getEventManager().registerListeners(this, new InteractInventoryListener());
 
         logger.info("SafeGuard started. Your haven is safe.");
     }

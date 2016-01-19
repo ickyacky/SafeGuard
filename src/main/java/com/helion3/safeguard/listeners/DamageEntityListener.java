@@ -52,8 +52,6 @@ public class DamageEntityListener {
         for (Zone zone : zones) {
             if (!zone.allows(attacker, event)) {
                 attacker.sendMessage(Format.error("Victim is protected from damage by a zone."));
-
-                victim.sendMessage(Format.message("Deflected damage inside your zone from " + attacker.getName()));
                 event.setCancelled(true);
                 break;
             }
