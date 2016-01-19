@@ -39,6 +39,8 @@ import com.helion3.safeguard.zones.CubicalZoneBuffer;
 import com.helion3.safeguard.zones.ZoneBuffer;
 
 public class PositionCommand {
+    private PositionCommand() {}
+
     public static CommandSpec getCommand() {
         return CommandSpec.builder()
         .description(Text.of("Mark a position as a zone boundary."))

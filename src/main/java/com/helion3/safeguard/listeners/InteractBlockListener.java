@@ -25,21 +25,31 @@ package com.helion3.safeguard.listeners;
 
 import java.util.Optional;
 
+import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.item.inventory.DropItemEvent;
+import org.spongepowered.api.event.block.InteractBlockEvent;
 
 import com.helion3.safeguard.SafeGuard;
 import com.helion3.safeguard.util.Format;
 
-public class DropItemListener {
+public class InteractBlockListener {
     @Listener
-    public void onDropItem(final DropItemEvent.Dispense event) {
-        Optional<Player> optionalPlayer = event.getCause().first(Player.class);
-        if (!optionalPlayer.isPresent()) {
+    public void onOpenInventory(final InteractBlockEvent.Secondary event) {
+        Optional<TileEntity> entity = event.getTargetBlock().getLocation().get().getTileEntity();
+        if (!entity.isPresent()) {
+            System.out.println("is not entity");
             return;
         }
 
+        Optional<Player> optionalPlayer = event.getCause().first(Player.class);
+        if (!optionalPlayer.isPresent()) {
+            System.out.println("no player cause");
+            return;
+        }
+
+
+        System.out.println("is inventory");
         Player player = optionalPlayer.get();
 
         if (!SafeGuard.getZoneManager().allows(player, event, player.getLocation())) {
