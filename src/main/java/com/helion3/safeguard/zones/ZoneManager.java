@@ -107,4 +107,22 @@ public class ZoneManager {
 
         return matches;
     }
+
+    /**
+     * Whether a zone includes this location.
+     * @param location
+     * @return
+     */
+    public boolean zoneExists(Location<World> location) {
+        boolean exists = false;
+
+        for (Zone zone : zones) {
+            if (zone.getVolume().contains(location)) {
+                exists = true;
+                break;
+            }
+        }
+
+        return exists;
+    }
 }

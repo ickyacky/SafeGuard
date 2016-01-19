@@ -54,6 +54,11 @@ public class PositionCommand {
                 Player player = (Player) source;
                 ZoneBuffer buffer;
 
+                if (SafeGuard.getZoneManager().zoneExists(player.getLocation())) {
+                    source.sendMessage(Format.error("Zone already exists here. Overlapping zones not currently allowed."));
+                    return CommandResult.empty();
+                }
+
                 // Get or create a buffer
                 if (SafeGuard.getActiveBuffers().containsKey(player)) {
                     buffer = SafeGuard.getActiveBuffers().get(player);
@@ -83,6 +88,30 @@ public class PositionCommand {
             }
         })
         .child(getFullheightCommand(), "fullheight")
+        .child(getClearCommand(), "clear")
+        .build();
+    }
+
+    protected static CommandSpec getClearCommand() {
+        return CommandSpec.builder()
+        .description(Text.of("Clear positions in your buffer."))
+        .permission("safeguard.create")
+        .executor(new CommandExecutor() {
+            @Override
+            public CommandResult execute(CommandSource source, CommandContext args) throws CommandException {
+                if (!(source instanceof Player)) {
+                    source.sendMessage(Format.error("Command usable only by a player."));
+                    return CommandResult.empty();
+                }
+
+                Player player = (Player) source;
+
+                SafeGuard.getActiveBuffers().remove(player);
+                source.sendMessage(Format.success("Positions cleared."));
+
+                return CommandResult.success();
+            }
+        })
         .build();
     }
 
@@ -115,11 +144,11 @@ public class PositionCommand {
                 int oldSize = buffer.getZoneVolume().getVolume();
 
                 buffer.transformMinPosition((Vector3i pos) -> {
-                    return new Vector3i(pos.getX(), 0, pos.getY());
+                    return new Vector3i(pos.getX(), 0, pos.getZ());
                 });
 
                 buffer.transformMaxPosition((Vector3i pos) -> {
-                    return new Vector3i(pos.getX(), player.getWorld().getBlockMax().getY(), pos.getY());
+                    return new Vector3i(pos.getX(), player.getWorld().getBlockMax().getY(), pos.getZ());
                 });
 
                 int newSize = buffer.getZoneVolume().getVolume();
