@@ -118,9 +118,20 @@ public class Zone implements DataSerializable {
         return owners;
     }
 
+    public UUID getUUID() {
+        return uuid;
+    }
+
     @Override
     public int getContentVersion() {
         return 1;
+    }
+
+    public void delete() {
+        File file = new File(SafeGuard.getParentDirectory().getAbsolutePath() + "/zones/" + uuid.toString() + ".json");
+        if (file.exists()) {
+            file.delete();
+        }
     }
 
     public void save() {
@@ -138,14 +149,24 @@ public class Zone implements DataSerializable {
                 file.createNewFile();
             }
 
-            System.out.println("saving zone...");
-
             FileWriter writer = new FileWriter(filePath);
             writer.write(DataUtil.jsonFromDataView(toContainer()).toString());
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof Zone) {
+            Zone zone = (Zone) object;
+            if (zone.getUUID().equals(this.uuid)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static Zone from(DataContainer data) throws Exception {

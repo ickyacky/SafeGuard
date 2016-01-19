@@ -24,6 +24,7 @@
 package com.helion3.safeguard.zones;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.spongepowered.api.entity.living.player.Player;
@@ -106,6 +107,22 @@ public class ZoneManager {
         }
 
         return matches;
+    }
+
+    /**
+     * Deletes a zone permanently.
+     * @param zone
+     */
+    public void delete(Zone zone) {
+        Iterator<Zone> iterator = zones.iterator();
+        while (iterator.hasNext()) {
+            Zone z = iterator.next();
+            if (z.equals(zone)) {
+                zone.delete();
+
+                iterator.remove();
+            }
+        }
     }
 
     /**
