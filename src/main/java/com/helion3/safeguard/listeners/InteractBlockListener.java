@@ -38,21 +38,17 @@ public class InteractBlockListener {
     public void onOpenInventory(final InteractBlockEvent.Secondary event) {
         Optional<TileEntity> entity = event.getTargetBlock().getLocation().get().getTileEntity();
         if (!entity.isPresent()) {
-            System.out.println("is not entity");
             return;
         }
 
         Optional<Player> optionalPlayer = event.getCause().first(Player.class);
         if (!optionalPlayer.isPresent()) {
-            System.out.println("no player cause");
             return;
         }
 
-
-        System.out.println("is inventory");
         Player player = optionalPlayer.get();
 
-        if (!SafeGuard.getZoneManager().allows(player, event, player.getLocation())) {
+        if (!SafeGuard.getZoneManager().allows(player, event, event.getTargetBlock().getLocation().get())) {
             player.sendMessage(Format.error("Sorry, this zone doesn't allow you to do that."));
             event.setCancelled(true);
         }
