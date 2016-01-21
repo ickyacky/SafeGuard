@@ -252,8 +252,6 @@ public class Zone implements DataSerializable {
         // Volume
         data.set(DataQueries.Volume, volume.toContainer());
 
-        System.out.println(DataUtil.jsonFromDataView(data));
-
         return data;
     }
 }
