@@ -51,6 +51,7 @@ public class SafeGuardCommands {
         builder.put(ImmutableList.of("pos", "position"), PositionCommand.getCommand());
         builder.put(ImmutableList.of("zone"), ZoneCommands.getCommand());
         builder.put(ImmutableList.of("reload"), ReloadCommand.getCommand());
+        builder.put(ImmutableList.of("?", "help"), HelpCommand.getCommand());
 
         return CommandSpec.builder()
         .executor(new CommandExecutor() {
@@ -58,7 +59,7 @@ public class SafeGuardCommands {
             public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
                 src.sendMessage(Text.of(
                     Format.heading(TextColors.GRAY, "By ", TextColors.GOLD, "viveleroi.\n"),
-                    TextColors.GRAY, "Help: ", TextColors.WHITE, "/pr ?\n",
+                    TextColors.GRAY, "Help: ", TextColors.WHITE, "/sg ?\n",
                     TextColors.GRAY, "IRC: ", TextColors.WHITE, "irc.esper.net #helion3\n"
                 ));
                 return CommandResult.empty();
