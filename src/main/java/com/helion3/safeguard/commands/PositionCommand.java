@@ -183,7 +183,7 @@ public class PositionCommand {
                 });
 
                 buffer.transformMaxPosition((Vector3i pos) -> {
-                    return new Vector3i(pos.getX(), player.getWorld().getBlockMax().getY(), pos.getZ());
+                    return new Vector3i(pos.getX(), player.getWorld().getDimension().getBuildHeight(), pos.getZ());
                 });
 
                 int newSize = buffer.getZoneVolume().getVolume();
