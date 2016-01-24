@@ -47,6 +47,9 @@ public class InteractBlockListener {
         }
 
         Player player = optionalPlayer.get();
+        if (player.hasPermission("safeguard.mod")) {
+            return;
+        }
 
         if (!SafeGuard.getZoneManager().allows(player, event, event.getTargetBlock().getLocation().get())) {
             player.sendMessage(Format.error("Sorry, this zone doesn't allow you to do that."));

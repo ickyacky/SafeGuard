@@ -41,6 +41,9 @@ public class DropItemListener {
         }
 
         Player player = optionalPlayer.get();
+        if (player.hasPermission("safeguard.mod")) {
+            return;
+        }
 
         if (!SafeGuard.getZoneManager().allows(player, event, player.getLocation())) {
             player.sendMessage(Format.error("Sorry, this zone doesn't allow you to do that."));

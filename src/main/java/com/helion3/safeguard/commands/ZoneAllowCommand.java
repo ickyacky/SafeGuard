@@ -71,6 +71,11 @@ public class ZoneAllowCommand implements CommandCallable {
 
         final Zone zone = zones.get(0);
 
+        if (!player.hasPermission("safeguard.mod") && !zone.getOwners().contains(player.getProfile())) {
+            source.sendMessage(Format.error("You do not have permission to change this zone."));
+            return CommandResult.empty();
+        }
+
         ListenableFuture<GameProfile> future = SafeGuard.getGame().getServer().getGameProfileManager().get(args[0]);
         future.addListener(new Runnable() {
             @Override

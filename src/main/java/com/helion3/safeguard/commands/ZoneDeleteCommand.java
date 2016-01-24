@@ -61,6 +61,11 @@ public class ZoneDeleteCommand {
                     return CommandResult.empty();
                 }
 
+                if (!player.hasPermission("safeguard.mod") && !zones.get(0).getOwners().contains(player.getProfile())) {
+                    source.sendMessage(Format.error("You do not have permission to change this zone."));
+                    return CommandResult.empty();
+                }
+
                 SafeGuard.getZoneManager().delete(zones.get(0));
 
                 source.sendMessage(Format.success("Zone removed successfully."));

@@ -44,6 +44,10 @@ public class ChangeBlockListener {
 
         Player player = optionalPlayer.get();
 
+        if (player.hasPermission("safeguard.mod")) {
+            return;
+        }
+
         for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
             if (!SafeGuard.getZoneManager().allows(player, event, transaction.getOriginal().getLocation().get())) {
                 player.sendMessage(Format.error("Sorry, this zone doesn't allow you to do that."));
