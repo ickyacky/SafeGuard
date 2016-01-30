@@ -35,6 +35,8 @@ import com.helion3.safeguard.SafeGuard;
 import com.helion3.safeguard.util.Format;
 
 public class ChangeBlockListener {
+    private final String flag = "block.change";
+
     @Listener
     public void onChangeBlock(final ChangeBlockEvent event) {
         Optional<Player> optionalPlayer = event.getCause().first(Player.class);
@@ -49,10 +51,9 @@ public class ChangeBlockListener {
         }
 
         for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-            if (!SafeGuard.getZoneManager().allows(player, event, transaction.getOriginal().getLocation().get())) {
+            if (!SafeGuard.getZoneManager().allows(player, flag, transaction.getOriginal().getLocation().get())) {
                 player.sendMessage(Format.error("Sorry, this zone doesn't allow you to do that."));
-                event.setCancelled(true);
-                break;
+                transaction.setValid(false);
             }
         }
     }

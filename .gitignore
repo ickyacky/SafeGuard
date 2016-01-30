@@ -46,6 +46,8 @@ nbproject
 build.xml
 target
 
+*.iml
+
 # various other potential build files
 build
 bin

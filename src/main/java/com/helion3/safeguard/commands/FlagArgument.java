@@ -21,23 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.helion3.safeguard.util;
+package com.helion3.safeguard.commands;
 
-import org.spongepowered.api.data.DataQuery;
+import java.util.Collections;
+import java.util.List;
 
-public class DataQueries {
-    private DataQueries() {}
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.args.ArgumentParseException;
+import org.spongepowered.api.command.args.CommandArgs;
+import org.spongepowered.api.command.args.CommandContext;
+import org.spongepowered.api.command.args.CommandElement;
+import org.spongepowered.api.text.Text;
 
-    public final static DataQuery Min = DataQuery.of("Min");
-    public final static DataQuery Max = DataQuery.of("Max");
-    public final static DataQuery Owners = DataQuery.of("Owners");
-    public final static DataQuery UserPermissions = DataQuery.of("UserPermissions");
-    public final static DataQuery Uuid = DataQuery.of("Uuid");
-    public final static DataQuery Volume = DataQuery.of("Volume");
-    public final static DataQuery World = DataQuery.of("World");
-    public final static DataQuery X = DataQuery.of("X");
-    public final static DataQuery Y = DataQuery.of("Y");
-    public final static DataQuery Z = DataQuery.of("Z");
-    public final static DataQuery ZoneName = DataQuery.of("ZoneName");
-    public final static DataQuery ZonePermissions = DataQuery.of("ZonePermissions");
+import com.helion3.safeguard.SafeGuard;
+
+public class FlagArgument extends CommandElement {
+    protected FlagArgument(Text key) {
+        super(key);
+    }
+
+    @Override
+    protected String parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
+        String flag = args.next();
+
+        if (!SafeGuard.getZoneManager().getFlagDefaults().containsKey(flag)) {
+            throw args.createError(Text.of(String.format("Invalid zone flag: %s", flag)));
+        }
+
+        return flag;
+    }
+
+    @Override
+    public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public Text getUsage(CommandSource src) {
+        return Text.of("Flag name.");
+    }
 }

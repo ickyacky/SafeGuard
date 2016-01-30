@@ -55,6 +55,7 @@ public class ZoneCommands {
         builder.put(ImmutableList.of("allow"), new ZoneAllowCommand());
         builder.put(ImmutableList.of("deny"), new ZoneDenyCommand());
         builder.put(ImmutableList.of("delete"), ZoneDeleteCommand.getCommand());
+        builder.put(ImmutableList.of("flag"), ZoneFlagCommand.getCommand());
 
         return CommandSpec.builder()
                 .executor(new CommandExecutor() {

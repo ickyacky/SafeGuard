@@ -34,6 +34,8 @@ import com.helion3.safeguard.SafeGuard;
 import com.helion3.safeguard.util.Format;
 
 public class InteractBlockListener {
+    private final String flag = "block.use";
+
     @Listener
     public void onOpenInventory(final InteractBlockEvent.Secondary event) {
         Optional<TileEntity> entity = event.getTargetBlock().getLocation().get().getTileEntity();
@@ -51,7 +53,7 @@ public class InteractBlockListener {
             return;
         }
 
-        if (!SafeGuard.getZoneManager().allows(player, event, event.getTargetBlock().getLocation().get())) {
+        if (!SafeGuard.getZoneManager().allows(player, flag, event.getTargetBlock().getLocation().get())) {
             player.sendMessage(Format.error("Sorry, this zone doesn't allow you to do that."));
             event.setCancelled(true);
         }

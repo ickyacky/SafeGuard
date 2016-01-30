@@ -49,6 +49,7 @@ import com.helion3.safeguard.listeners.DamageEntityListener;
 import com.helion3.safeguard.listeners.DropItemListener;
 import com.helion3.safeguard.listeners.ExplosionListener;
 import com.helion3.safeguard.listeners.InteractBlockListener;
+import com.helion3.safeguard.listeners.InteractEntityListener;
 import com.helion3.safeguard.listeners.MoveEntityListener;
 import com.helion3.safeguard.listeners.SpawnEntityListener;
 import com.helion3.safeguard.util.DataUtil;
@@ -95,6 +96,7 @@ public class SafeGuard {
         game.getEventManager().registerListeners(this, new DropItemListener());
         game.getEventManager().registerListeners(this, new ExplosionListener());
         game.getEventManager().registerListeners(this, new InteractBlockListener());
+        game.getEventManager().registerListeners(this, new InteractEntityListener());
         game.getEventManager().registerListeners(this, new MoveEntityListener());
         game.getEventManager().registerListeners(this, new SpawnEntityListener());
 
@@ -102,8 +104,18 @@ public class SafeGuard {
     }
 
     /**
+     * Get the config
      *
-     * @return
+     * @return Configuration
+     */
+    public static Configuration getConfig() {
+        return config;
+    }
+
+    /**
+     * Get the Game instance.
+     *
+     * @return Game
      */
     public static Game getGame() {
         return game;
@@ -111,6 +123,7 @@ public class SafeGuard {
 
     /**
      * Injected Game instance.
+     *
      * @param injectGame Game
      */
     @Inject
@@ -128,7 +141,8 @@ public class SafeGuard {
     }
 
     /**
-     * Injects the Logger instance for this plugin
+     * Injects the Logger instance for this plugin.
+     *
      * @param log Logger
      */
     @Inject
@@ -147,6 +161,7 @@ public class SafeGuard {
 
     /**
      * Get parent directory.
+     *
      * @return File
      */
     public static File getParentDirectory() {
@@ -155,6 +170,8 @@ public class SafeGuard {
 
     /**
      * Get zone manager.
+     *
+     * @return ZoneManager
      */
     public static ZoneManager getZoneManager() {
         return zoneManager;
@@ -162,6 +179,7 @@ public class SafeGuard {
 
     /**
      * Loads zones from save files.
+     *
      * @throws IOException
      */
     public static void loadZones() throws IOException {

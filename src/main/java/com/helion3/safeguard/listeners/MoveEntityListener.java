@@ -7,6 +7,8 @@ import org.spongepowered.api.event.entity.DisplaceEntityEvent;
 import com.helion3.safeguard.SafeGuard;
 
 public class MoveEntityListener {
+    private final String spawnMonsterFlag = "spawn.monsters";
+
     @Listener
     public void onMove(final DisplaceEntityEvent.Move event) {
         // Only apply to Monsters
@@ -14,7 +16,7 @@ public class MoveEntityListener {
             return;
         }
 
-        if (SafeGuard.getZoneManager().zoneExists(event.getTargetEntity().getLocation())) {
+        if (SafeGuard.getZoneManager().allows(spawnMonsterFlag, event.getTargetEntity().getLocation())) {
             event.getTargetEntity().remove();
         }
     }

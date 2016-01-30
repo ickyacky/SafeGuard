@@ -11,6 +11,8 @@ import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import com.helion3.safeguard.SafeGuard;
 
 public class SpawnEntityListener {
+    private final String spawnMonsterFlag = "spawn.monster";
+
     @Listener
     public void onSpawn(final SpawnEntityEvent event) {
         // Skip any intentionally-spawned creatures
@@ -19,15 +21,12 @@ public class SpawnEntityListener {
         }
 
         // Filter spawns
-        event.filterEntities(new Predicate<Entity>() {
-            @Override
-            public boolean test(Entity entity) {
-                if (entity instanceof Monster) {
-                    return !SafeGuard.getZoneManager().zoneExists(entity.getLocation());
-                }
-
-                return true;
+        event.filterEntities((Predicate<Entity>) entity -> {
+            if (entity instanceof Monster) {
+                return SafeGuard.getZoneManager().allows(spawnMonsterFlag, entity.getLocation());
             }
+
+            return true;
         });
     }
 }

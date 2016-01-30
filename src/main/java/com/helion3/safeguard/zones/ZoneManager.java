@@ -28,17 +28,31 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.Event;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.google.common.collect.ImmutableMap;
 import com.helion3.safeguard.SafeGuard;
 
 public class ZoneManager {
     private final List<Zone> zones = new ArrayList<Zone>();
+    private ImmutableMap<String, Boolean> flagDefaults;
+
+    public ZoneManager() {
+        // @todo make these configurable
+        ImmutableMap.Builder<String, Boolean> builder = ImmutableMap.builder();
+        builder.put("block.change", false);
+        builder.put("block.use", false);
+        builder.put("damage.player", false);
+        builder.put("item.drop", false);
+        builder.put("spawn.monster", false);
+
+        flagDefaults = builder.build();
+    }
 
     /**
      * Add a zone.
+     *
      * @param zone
      */
     public void add(Zone zone) {
@@ -46,7 +60,17 @@ public class ZoneManager {
     }
 
     /**
+     * Get all default flags and values.
+     *
+     * @return ImmutableMap Flag/Values
+     */
+    public ImmutableMap<String, Boolean> getFlagDefaults() {
+        return flagDefaults;
+    }
+
+    /**
      * Get all zones.
+     *
      * @return List of zones.
      */
     public List<Zone> getZones() {
@@ -54,18 +78,45 @@ public class ZoneManager {
     }
 
     /**
-     * Is the player allowed to perform an event at this location.
-     * @param player Player
+     * Is the event allowed at this location.
+     *
+     * @param flag String
      * @param location Location
      * @return
      */
-    public boolean allows(Player player, Event event, Location<World> location) {
+    public boolean allows(String flag, Location<World> location) {
         boolean allowed = false;
 
         List<Zone> zones = getZones(location);
         if (!zones.isEmpty()) {
             for (Zone zone : zones) {
-                if (zone.allows(player, event)) {
+                if (zone.allows(flag)) {
+                    allowed = true;
+                    break;
+                }
+            }
+        } else {
+            allowed = true;
+        }
+
+        return allowed;
+    }
+
+    /**
+     * Is the player allowed to perform an event at this location.
+     *
+     * @param player Player
+     * @param flag String
+     * @param location Location
+     * @return
+     */
+    public boolean allows(Player player, String flag, Location<World> location) {
+        boolean allowed = false;
+
+        List<Zone> zones = getZones(location);
+        if (!zones.isEmpty()) {
+            for (Zone zone : zones) {
+                if (zone.allows(player, flag)) {
                     allowed = true;
                     break;
                 }
@@ -86,6 +137,7 @@ public class ZoneManager {
 
     /**
      * Get all zones for a given location.
+     *
      * @return List of zones.
      */
     public List<Zone> getZones(Location<World> location) {
@@ -102,6 +154,7 @@ public class ZoneManager {
 
     /**
      * Get all zones for a given location owned by player.
+     *
      * @return List of zones.
      */
     public List<Zone> getZones(Location<World> location, Player owner) {
@@ -118,6 +171,7 @@ public class ZoneManager {
 
     /**
      * Deletes a zone permanently.
+     *
      * @param zone
      */
     public void delete(Zone zone) {
@@ -134,6 +188,7 @@ public class ZoneManager {
 
     /**
      * Whether a zone includes this location.
+     *
      * @param location
      * @return
      */

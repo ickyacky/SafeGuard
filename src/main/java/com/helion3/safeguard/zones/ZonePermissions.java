@@ -23,13 +23,50 @@
  */
 package com.helion3.safeguard.zones;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.MemoryDataContainer;
 
+import com.helion3.safeguard.SafeGuard;
+
 public class ZonePermissions implements DataSerializable {
+    private Map<String, Boolean> permissions = new HashMap<String, Boolean>();
+
+    /**
+     * Check if a flag is enabled or disabled.
+     *
+     * @param flag
+     * @return
+     */
+    public boolean allows(String flag) {
+        if (permissions.containsKey(flag)) {
+            return permissions.get(flag);
+        }
+
+        // Default
+        if (SafeGuard.getZoneManager().getFlagDefaults().containsKey(flag)) {
+            return SafeGuard.getZoneManager().getFlagDefaults().get(flag);
+        }
+
+        return false;
+    }
+
+    /**
+     * Add/update a specific flag and allow/deny boolean.
+     *
+     * @param flag String flag name.
+     * @param value boolean Allow/deny bool
+     */
+    public void put(String flag, boolean value) {
+        // @todo verify flag
+        permissions.put(flag, value);
+    }
 
     @Override
     public int getContentVersion() {
@@ -43,7 +80,10 @@ public class ZonePermissions implements DataSerializable {
     @Override
     public DataContainer toContainer() {
         DataContainer permsissions = new MemoryDataContainer();
-        permsissions.set(DataQuery.of("Test"), "*");
+
+        for (Entry<String, Boolean> entry : permissions.entrySet()) {
+            permsissions.set(DataQuery.of(entry.getKey()), entry.getValue());
+        }
 
         return permsissions;
     }

@@ -38,6 +38,8 @@ import com.helion3.safeguard.util.Format;
 import com.helion3.safeguard.zones.Zone;
 
 public class DamageEntityListener {
+    private final String pvpFlag = "damage.player";
+
     @Listener
     public void onDamageEntity(final DamageEntityEvent event) {
         if (!(event.getTargetEntity() instanceof Player)) {
@@ -73,7 +75,7 @@ public class DamageEntityListener {
         }
 
         for (Zone zone : zones) {
-            if (!zone.allows(attacker, event)) {
+            if (!zone.allows(attacker, pvpFlag)) {
                 attacker.sendMessage(Format.error("Victim is protected from damage by a zone."));
                 event.setCancelled(true);
                 break;

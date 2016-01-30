@@ -33,6 +33,8 @@ import com.helion3.safeguard.SafeGuard;
 import com.helion3.safeguard.util.Format;
 
 public class DropItemListener {
+    private final String flag = "item.drop";
+
     @Listener
     public void onDropItem(final DropItemEvent.Dispense event) {
         Optional<Player> optionalPlayer = event.getCause().first(Player.class);
@@ -45,7 +47,7 @@ public class DropItemListener {
             return;
         }
 
-        if (!SafeGuard.getZoneManager().allows(player, event, player.getLocation())) {
+        if (!SafeGuard.getZoneManager().allows(player, flag, player.getLocation())) {
             player.sendMessage(Format.error("Sorry, this zone doesn't allow you to do that."));
             event.setCancelled(true);
         }
