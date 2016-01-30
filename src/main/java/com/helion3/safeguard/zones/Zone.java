@@ -220,28 +220,27 @@ public class Zone implements DataSerializable {
         // @todo need way to determine specific type
         Volume volume = CuboidVolume.from(optionalVolume.get());
 
-        Optional<DataView> optionalZonePerms = data.getView(DataQueries.ZonePermissions);
-        if (!optionalZonePerms.isPresent()) {
-            throw new Exception("Invalid zone data: zone permissions");
-        }
-
         // Zone perms
-        ZonePermissions perms = ZonePermissions.from(optionalZonePerms.get());
+        ZonePermissions perms;
+        Optional<DataView> optionalZonePerms = data.getView(DataQueries.ZonePermissions);
+        if (optionalZonePerms.isPresent()) {
+            perms = ZonePermissions.from(optionalZonePerms.get());
+        } else {
+            perms = new ZonePermissions();
+        }
 
         // Restore zone object
         Zone zone = new Zone(UUID.fromString(optionalUuid.get()), optionalName.get(), volume, perms);
 
         // Owners
         Optional<List<?>> optionalOwners = data.getList(DataQueries.Owners);
-        if (!optionalOwners.isPresent()) {
-            throw new Exception("Invalid zone data: owners list");
-        }
-
-        for (Object object : optionalOwners.get()) {
-            if (object instanceof String) {
-                UUID uuid = UUID.fromString((String) object);
-                Future<GameProfile> future = SafeGuard.getGame().getServer().getGameProfileManager().get(uuid);
-                zone.addOwner(future.get());
+        if (optionalOwners.isPresent()) {
+            for (Object object : optionalOwners.get()) {
+                if (object instanceof String) {
+                    UUID uuid = UUID.fromString((String) object);
+                    Future<GameProfile> future = SafeGuard.getGame().getServer().getGameProfileManager().get(uuid);
+                    zone.addOwner(future.get());
+                }
             }
         }
 
