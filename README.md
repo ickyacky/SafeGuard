@@ -22,7 +22,16 @@ Place into your `mods` directory.
 - `/sg zone create (name)` - Create a new zone with the selected region.
 - `/sg zone allow (user)` - Add a user to your zone.
 - `/sg zone deny (user)` - Revoke access to your zone for a user.
+- `/sg zone flag (flag) (true|false)` - Toggle a specific flag.
 - `/sg zone delete` - Delete a zone.
+
+## Flags
+
+- `block.change` - Block changes (place, break, etc) are allowed.
+- `block.use` - Containers may be opened.
+- `damage.player` - Players may damage a player in their zone.
+- `item.drop` - Players may drop items.
+- `spawn.monster` - Monsters may spawn or enter the zone.
 
 ## Permissions
 

@@ -47,6 +47,7 @@ public class HelpCommand {
                     source.sendMessage(Format.message("/sg zone allow (player)", TextColors.GRAY, " - Allow a player access to the zone."));
                     source.sendMessage(Format.message("/sg zone deny (player)", TextColors.GRAY, " - Remove player's access to this zone."));
                     source.sendMessage(Format.message("/sg zone delete", TextColors.GRAY, " - Delete this zone."));
+                    source.sendMessage(Format.message("/sg zone flag (flag) (true|false)", TextColors.GRAY, " - Toggle a flag."));
                     source.sendMessage(Format.message("/sg reload", TextColors.GRAY, " - Reload config."));
                     return CommandResult.empty();
                 }
