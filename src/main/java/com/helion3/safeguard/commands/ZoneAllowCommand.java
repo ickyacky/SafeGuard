@@ -53,7 +53,7 @@ public class ZoneAllowCommand implements CommandCallable {
         Player player = (Player) source;
         String[] args = arguments.split(" ");
 
-        List<Zone> zones = SafeGuard.getZoneManager().getZones(player.getLocation(), player);
+        List<Zone> zones = SafeGuard.getZoneManager().getZones(player.getLocation());
         if (zones.isEmpty()) {
             source.sendMessage(Format.error("No zone at your location. Try defining it by name. /sg zone [name] ..."));
             return CommandResult.empty();

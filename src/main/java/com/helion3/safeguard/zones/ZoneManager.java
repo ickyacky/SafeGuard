@@ -153,23 +153,6 @@ public class ZoneManager {
     }
 
     /**
-     * Get all zones for a given location owned by player.
-     *
-     * @return List of zones.
-     */
-    public List<Zone> getZones(Location<World> location, Player owner) {
-        List<Zone> matches = new ArrayList<Zone>();
-
-        for (Zone zone : SafeGuard.getZoneManager().getZones()) {
-            if (zone.getVolume().contains(location) && zone.getOwners().contains(owner.getProfile())) {
-                matches.add(zone);
-            }
-        }
-
-        return matches;
-    }
-
-    /**
      * Deletes a zone permanently.
      *
      * @param zone
