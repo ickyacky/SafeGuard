@@ -85,7 +85,13 @@ public class ZonePermissions implements DataSerializable {
     }
 
     public static ZonePermissions from(DataView data) throws Exception {
-        return new ZonePermissions();
+        ZonePermissions perms = new ZonePermissions();
+
+        for (DataQuery key : data.getKeys(false)) {
+            perms.put(key.toString(), data.getBoolean(key).get());
+        }
+
+        return perms;
     }
 
     @Override
