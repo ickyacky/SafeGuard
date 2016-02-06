@@ -39,7 +39,6 @@ public class MoveEntityListener {
             return;
         }
 
-
         if (!SafeGuard.getZoneManager().allows(spawnMonsterFlag, event.getTargetEntity().getLocation())) {
             event.getTargetEntity().remove();
         }

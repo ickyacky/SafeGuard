@@ -77,24 +77,21 @@ public class ZoneAllowCommand implements CommandCallable {
         }
 
         ListenableFuture<GameProfile> future = SafeGuard.getGame().getServer().getGameProfileManager().get(args[0]);
-        future.addListener(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    GameProfile profile = future.get();
+        future.addListener(() -> {
+            try {
+                GameProfile profile = future.get();
 
-                    // Grant permissions and save
-                    zone.allow(profile);
-                    zone.save();
+                // Grant permissions and save
+                zone.allow(profile);
+                zone.save();
 
-                    // Success
-                    source.sendMessage(Format.success(profile.getName() + " granted permission in this zone!"));
-                } catch (InterruptedException | ExecutionException e) {
-                    if (e instanceof ProfileNotFoundException) {
-                        source.sendMessage(Format.error("Could not find player with name " + args[0]));
-                    } else {
-                        e.printStackTrace();
-                    }
+                // Success
+                source.sendMessage(Format.success(profile.getName() + " granted permission in this zone!"));
+            } catch (InterruptedException | ExecutionException e) {
+                if (e instanceof ProfileNotFoundException) {
+                    source.sendMessage(Format.error("Could not find player with name " + args[0]));
+                } else {
+                    e.printStackTrace();
                 }
             }
         }, MoreExecutors.sameThreadExecutor());

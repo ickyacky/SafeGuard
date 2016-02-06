@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.common.collect.ImmutableMap;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataSerializable;
@@ -42,7 +43,7 @@ public class ZonePermissions implements DataSerializable {
      * Check if a flag is enabled or disabled.
      *
      * @param flag
-     * @return
+     * @return boolean
      */
     public boolean allows(String flag) {
         if (permissions.containsKey(flag)) {
@@ -55,6 +56,16 @@ public class ZonePermissions implements DataSerializable {
         }
 
         return false;
+    }
+
+    /**
+     * Get all flags and their boolean values.
+     *
+     * @return ImmutableMap<String, Boolean>
+     */
+    public ImmutableMap<String, Boolean> getPermissions() {
+        ImmutableMap.Builder<String, Boolean> builder = ImmutableMap.builder();
+        return builder.putAll(permissions).build();
     }
 
     /**

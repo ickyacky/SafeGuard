@@ -24,13 +24,10 @@
 package com.helion3.safeguard.commands;
 
 import java.util.List;
+import java.util.Map;
 
 import org.spongepowered.api.command.CommandCallable;
-import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.args.CommandContext;
-import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.profile.GameProfile;
@@ -40,6 +37,7 @@ import com.google.common.collect.ImmutableMap;
 import com.helion3.safeguard.SafeGuard;
 import com.helion3.safeguard.util.Format;
 import com.helion3.safeguard.zones.Zone;
+import org.spongepowered.api.text.format.TextColors;
 
 public class ZoneCommands {
     private ZoneCommands() {}
@@ -51,45 +49,54 @@ public class ZoneCommands {
     public static CommandSpec getCommand() {
         // Build child commands
         ImmutableMap.Builder<List<String>, CommandCallable> builder = ImmutableMap.builder();
-        builder.put(ImmutableList.of("create"), new ZoneCreateCommand());
-        builder.put(ImmutableList.of("allow"), new ZoneAllowCommand());
-        builder.put(ImmutableList.of("deny"), new ZoneDenyCommand());
+        builder.put(ImmutableList.of("create", "c"), new ZoneCreateCommand());
+        builder.put(ImmutableList.of("allow", "a"), new ZoneAllowCommand());
+        builder.put(ImmutableList.of("deny", "d"), new ZoneDenyCommand());
         builder.put(ImmutableList.of("delete"), ZoneDeleteCommand.getCommand());
-        builder.put(ImmutableList.of("flag"), ZoneFlagCommand.getCommand());
+        builder.put(ImmutableList.of("flag", "f"), ZoneFlagCommand.getCommand());
 
         return CommandSpec.builder()
-                .executor(new CommandExecutor() {
-                    @Override
-                    public CommandResult execute(CommandSource source, CommandContext args) throws CommandException {
-                        if (!(source instanceof Player)) {
-                            source.sendMessage(Format.error("Command usable only by a player."));
-                            return CommandResult.empty();
-                        }
+        .executor((source, args) -> {
+            if (!(source instanceof Player)) {
+                source.sendMessage(Format.error("Command usable only by a player."));
+                return CommandResult.empty();
+            }
 
-                        Player player = (Player) source;
+            Player player = (Player) source;
 
-                        List<Zone> zones = SafeGuard.getZoneManager().getZones(player.getLocation());
-                        if (zones.isEmpty()) {
-                            source.sendMessage(Format.error("No zone found for your position."));
-                            return CommandResult.empty();
-                        }
+            List<Zone> zones = SafeGuard.getZoneManager().getZones(player.getLocation());
+            if (zones.isEmpty()) {
+                source.sendMessage(Format.error("No zone found for your position."));
+                return CommandResult.empty();
+            }
 
-                        for (Zone zone : zones) {
-                            source.sendMessage(Format.heading("Zone " + zone.getName()));
-                            source.sendMessage(Format.subdued("Owners:"));
+            for (Zone zone : zones) {
+                source.sendMessage(Format.heading("Zone " + zone.getName()));
 
-                            for (GameProfile profile : zone.getOwners()) {
-                                source.sendMessage(Format.message(profile.getName()));
-                            }
+                // Owners
+                source.sendMessage(Format.subdued("Owners:"));
+                for (GameProfile profile : zone.getOwners()) {
+                    source.sendMessage(Format.message(profile.getName()));
+                }
 
-                            source.sendMessage(Format.subdued("Volume:"));
-                            source.sendMessage(Format.message(zone.getVolume().getMin().toString() + ", " + zone.getVolume().getMax().toString()));
-                            source.sendMessage(Format.message("Blocks: " + zone.getVolume().getVolume()));
-                        }
+                // Volume
+                source.sendMessage(Format.subdued("Volume:"));
+                source.sendMessage(Format.message(zone.getVolume().getMin().toString() + ", " + zone.getVolume().getMax().toString()));
+                source.sendMessage(Format.message("Blocks: " + zone.getVolume().getVolume()));
 
-                        return CommandResult.empty();
-                    }
-                })
-                .children(builder.build()).build();
+                // Flags
+                source.sendMessage(Format.subdued("Flags:"));
+                for (Map.Entry<String, Boolean> entry : zone.getPermissions().getPermissions().entrySet()) {
+                    source.sendMessage(Format.message(entry.getKey(), TextColors.YELLOW, entry.getValue()));
+                }
+            }
+
+            source.sendMessage(Format.subdued("Volume:"));
+            source.sendMessage(Format.message(zone.getVolume().getMin().toString() + ", " + zone.getVolume().getMax().toString()));
+            source.sendMessage(Format.message("Blocks: " + zone.getVolume().getVolume()));
+
+            return CommandResult.empty();
+        })
+        .children(builder.build()).build();
     }
 }

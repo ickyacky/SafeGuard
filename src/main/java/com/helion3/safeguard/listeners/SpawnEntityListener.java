@@ -38,11 +38,6 @@ public class SpawnEntityListener {
 
     @Listener
     public void onSpawn(final SpawnEntityEvent event) {
-        // Skip any intentionally-spawned creatures
-        if (event.getCause().first(Player.class).isPresent()) {
-            return;
-        }
-
         // Filter spawns
         event.filterEntities((Predicate<Entity>) entity -> {
             if (entity instanceof Monster) {

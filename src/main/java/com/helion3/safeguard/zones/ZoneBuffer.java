@@ -34,29 +34,29 @@ public interface ZoneBuffer {
      * Add a Player position to the buffer.
      * @param position
      */
-    public void addPosition(Vector3i position);
+    void addPosition(Vector3i position);
 
     /**
      * Get all current positions.
      * @return
      */
-    public List<Vector3i> getPositions();
+    List<Vector3i> getPositions();
 
     /**
      * Determines whether the buffer has enough data for a shape.
      * @return boolean
      */
-    public boolean isComplete();
+    boolean isComplete();
 
     /**
      * Build a final zone shape.
      * @return CuboidVolume
      */
-    public CuboidVolume getZoneVolume();
+    CuboidVolume getZoneVolume();
 
     /**
      * Transform each position.
      */
-    public void transformMinPosition(Vector3iTransformer transformer);
-    public void transformMaxPosition(Vector3iTransformer transformer);
+    void transformMinPosition(Vector3iTransformer transformer);
+    void transformMaxPosition(Vector3iTransformer transformer);
 }

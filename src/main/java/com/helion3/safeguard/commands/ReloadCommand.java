@@ -25,11 +25,7 @@ package com.helion3.safeguard.commands;
 
 import java.io.IOException;
 
-import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.args.CommandContext;
-import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.text.Text;
 
@@ -43,23 +39,20 @@ public class ReloadCommand {
         return CommandSpec.builder()
         .description(Text.of("Reload config and zone files."))
         .permission("safeguard.admin")
-        .executor(new CommandExecutor() {
-            @Override
-            public CommandResult execute(CommandSource source, CommandContext args) throws CommandException {
-                // Clear all zones in memory
-                SafeGuard.getZoneManager().clearAll();
+        .executor((source, args) -> {
+            // Clear all zones in memory
+            SafeGuard.getZoneManager().clearAll();
 
-                // Reload zone files
-                try {
-                    SafeGuard.loadZones();
-                    source.sendMessage(Format.success("Reloaded configs and zone files."));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    source.sendMessage(Format.error(e.getMessage()));
-                }
-
-                return CommandResult.success();
+            // Reload zone files
+            try {
+                SafeGuard.loadZones();
+                source.sendMessage(Format.success("Reloaded configs and zone files."));
+            } catch (IOException e) {
+                e.printStackTrace();
+                source.sendMessage(Format.error(e.getMessage()));
             }
+
+            return CommandResult.success();
         }).build();
     }
 }

@@ -77,26 +77,23 @@ public class ZoneDenyCommand implements CommandCallable {
         }
 
         ListenableFuture<GameProfile> future = SafeGuard.getGame().getServer().getGameProfileManager().get(args[0]);
-        future.addListener(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    GameProfile profile = future.get();
+        future.addListener(() -> {
+            try {
+                GameProfile profile = future.get();
 
-                    // Deny permissions and save
-                    if (zone.deny(profile)) {
-                        zone.save();
+                // Deny permissions and save
+                if (zone.deny(profile)) {
+                    zone.save();
 
-                        source.sendMessage(Format.success(profile.getName() + " denied permission in this zone."));
-                    } else {
-                        source.sendMessage(Format.error(profile.getName() + " does not have any permission in this zone."));
-                    }
-                } catch (InterruptedException | ExecutionException e) {
-                    if (e instanceof ProfileNotFoundException) {
-                        source.sendMessage(Format.error("Could not find player with name " + args[0]));
-                    } else {
-                        e.printStackTrace();
-                    }
+                    source.sendMessage(Format.success(profile.getName() + " denied permission in this zone."));
+                } else {
+                    source.sendMessage(Format.error(profile.getName() + " does not have any permission in this zone."));
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                if (e instanceof ProfileNotFoundException) {
+                    source.sendMessage(Format.error("Could not find player with name " + args[0]));
+                } else {
+                    e.printStackTrace();
                 }
             }
         }, MoreExecutors.sameThreadExecutor());

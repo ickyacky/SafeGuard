@@ -26,11 +26,7 @@ package com.helion3.safeguard.commands;
 import java.util.List;
 
 import org.spongepowered.api.command.CommandCallable;
-import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.args.CommandContext;
-import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
@@ -49,21 +45,18 @@ public class SafeGuardCommands {
     public static CommandSpec getCommand() {
         ImmutableMap.Builder<List<String>, CommandCallable> builder = ImmutableMap.builder();
         builder.put(ImmutableList.of("pos", "position"), PositionCommand.getCommand());
-        builder.put(ImmutableList.of("zone"), ZoneCommands.getCommand());
+        builder.put(ImmutableList.of("zone", "z"), ZoneCommands.getCommand());
         builder.put(ImmutableList.of("reload"), ReloadCommand.getCommand());
         builder.put(ImmutableList.of("?", "help"), HelpCommand.getCommand());
 
         return CommandSpec.builder()
-        .executor(new CommandExecutor() {
-            @Override
-            public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-                src.sendMessage(Text.of(
-                    Format.heading(TextColors.GRAY, "By ", TextColors.GOLD, "viveleroi.\n"),
-                    TextColors.GRAY, "Help: ", TextColors.WHITE, "/sg ?\n",
-                    TextColors.GRAY, "IRC: ", TextColors.WHITE, "irc.esper.net #helion3\n"
-                ));
-                return CommandResult.empty();
-            }
+        .executor((src, args) -> {
+            src.sendMessage(Text.of(
+                Format.heading(TextColors.GRAY, "By ", TextColors.GOLD, "viveleroi.\n"),
+                TextColors.GRAY, "Help: ", TextColors.WHITE, "/sg ?\n",
+                TextColors.GRAY, "IRC: ", TextColors.WHITE, "irc.esper.net #helion3\n"
+            ));
+            return CommandResult.empty();
         })
         .children(builder.build()).build();
     }
