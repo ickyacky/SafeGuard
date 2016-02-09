@@ -31,6 +31,8 @@ import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.service.permission.Subject;
+import org.spongepowered.api.service.permission.option.OptionSubject;
 import org.spongepowered.api.text.Text;
 
 import com.helion3.safeguard.SafeGuard;
@@ -47,6 +49,25 @@ public class ZoneCreateCommand implements CommandCallable {
         }
 
         Player player = (Player) source;
+
+        Subject subject = player.getContainingCollection().get(player.getIdentifier());
+        int zoneLimit = -1;
+
+        if (subject instanceof OptionSubject) {
+            Optional<String> optionalLimit = ((OptionSubject) subject).getOption("zoneLimit");
+            if (optionalLimit.isPresent()) {
+                zoneLimit = Integer.parseInt(optionalLimit.get());
+            }
+        }
+
+        if (zoneLimit > -1) {
+            int zoneCount = SafeGuard.getZoneManager().getZones(player.getProfile()).size();
+
+            if (zoneCount >= zoneLimit) {
+                source.sendMessage(Format.error("You've reached the maximum number of zones you can have."));
+                return CommandResult.empty();
+            }
+        }
 
         if (!SafeGuard.getActiveBuffers().containsKey(player)) {
             source.sendMessage(Format.error("You haven't added any positions for a shape. Use /sg pos"));

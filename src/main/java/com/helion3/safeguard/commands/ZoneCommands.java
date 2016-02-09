@@ -91,10 +91,6 @@ public class ZoneCommands {
                 }
             }
 
-            source.sendMessage(Format.subdued("Volume:"));
-            source.sendMessage(Format.message(zone.getVolume().getMin().toString() + ", " + zone.getVolume().getMax().toString()));
-            source.sendMessage(Format.message("Blocks: " + zone.getVolume().getVolume()));
-
             return CommandResult.empty();
         })
         .children(builder.build()).build();

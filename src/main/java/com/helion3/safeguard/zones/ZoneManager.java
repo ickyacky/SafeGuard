@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -145,6 +146,23 @@ public class ZoneManager {
 
         for (Zone zone : SafeGuard.getZoneManager().getZones()) {
             if (zone.getVolume().contains(location)) {
+                matches.add(zone);
+            }
+        }
+
+        return matches;
+    }
+
+    /**
+     * Get all zones for a specific game profile.
+     *
+     * @return List of zones.
+     */
+    public List<Zone> getZones(GameProfile profile) {
+        List<Zone> matches = new ArrayList<Zone>();
+
+        for (Zone zone : SafeGuard.getZoneManager().getZones()) {
+            if (zone.getOwners().contains(profile)) {
                 matches.add(zone);
             }
         }
