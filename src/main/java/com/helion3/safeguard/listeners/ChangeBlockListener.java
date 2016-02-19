@@ -52,7 +52,18 @@ public class ChangeBlockListener {
 
         for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
             if (!SafeGuard.getZoneManager().allows(player, flag, transaction.getOriginal().getLocation().get())) {
-                player.sendMessage(Format.error("Sorry, this zone doesn't allow you to do that."));
+                String verb = "change";
+                String block = transaction.getOriginal().getState().getType().getName();
+
+                if (event instanceof ChangeBlockEvent.Break) {
+                    verb = "break";
+                }
+                else if (event instanceof ChangeBlockEvent.Place) {
+                    block = transaction.getFinal().getState().getType().getName();
+                    verb = "place";
+                }
+
+                player.sendMessage(Format.error(String.format("Zone does not allow you to %s this %s block.", verb, block)));
                 transaction.setValid(false);
             }
         }
