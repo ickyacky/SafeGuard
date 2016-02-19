@@ -50,6 +50,10 @@ public class ZonePermissions implements DataSerializable {
             return permissions.get(flag);
         }
 
+        if (permissions.containsKey("*")) {
+            return true;
+        }
+
         // Default
         if (SafeGuard.getZoneManager().getFlagDefaults().containsKey(flag)) {
             return SafeGuard.getZoneManager().getFlagDefaults().get(flag);

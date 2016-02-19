@@ -73,7 +73,10 @@ public class Zone implements DataSerializable {
     }
 
     public void allow(GameProfile profile) {
-        allow(profile, new ZonePermissions());
+        ZonePermissions perms = new ZonePermissions();
+        perms.put("*", true);
+        
+        allow(profile, perms);
     }
 
     public void allow(GameProfile profile, ZonePermissions zonePermissions) {
