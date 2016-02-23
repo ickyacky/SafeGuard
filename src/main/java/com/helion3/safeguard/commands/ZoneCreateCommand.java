@@ -87,6 +87,13 @@ public class ZoneCreateCommand implements CommandCallable {
             return CommandResult.empty();
         }
 
+        // Verify overlaps
+        List<Zone> overlaps = SafeGuard.getZoneManager().getZonesOverlapping(buffer.getZoneVolume());
+        if (!overlaps.isEmpty()) {
+            source.sendMessage(Format.error("Your zone overlaps another which you do not own."));
+            return CommandResult.empty();
+        }
+
         SafeGuard.getActiveBuffers().remove(player);
 
         // Create a new zone

@@ -44,16 +44,26 @@ public class CuboidVolume extends Volume {
 
     @Override
     public boolean contains(Location<? extends Extent> location) {
-        boolean contains = false;
-
         if (location.getExtent().equals(extent)) {
-            Vector3i pos = location.getPosition().toInt();
-            contains = (min.getX() <= pos.getX() && max.getX() >= pos.getX() &&
-                        min.getY() <= pos.getY() && max.getY() >= pos.getY() &&
-                        min.getZ() <= pos.getZ() && max.getZ() >= pos.getZ());
+            return this.contains(location.getPosition().toInt());
         }
 
-        return contains;
+        return false;
+    }
+
+    @Override
+    public boolean contains(Vector3i pos) {
+        return (pos.getX() >= min.getX() && pos.getX() <= max.getX() &&
+                pos.getY() >= min.getY() && pos.getY() <= max.getY() &&
+                pos.getZ() >= min.getZ() && pos.getZ() <= max.getZ());
+    }
+
+    @Override
+    public boolean intersects(Volume v2) {
+        return (contains(v2.getMin()) ||
+                contains(v2.getMax()) ||
+                v2.contains(min) ||
+                v2.contains(max));
     }
 
     @Override

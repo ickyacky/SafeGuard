@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.helion3.safeguard.volumes.Volume;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.world.Location;
@@ -67,15 +68,6 @@ public class ZoneManager {
      */
     public ImmutableMap<String, Boolean> getFlagDefaults() {
         return flagDefaults;
-    }
-
-    /**
-     * Get all zones.
-     *
-     * @return List of zones.
-     */
-    public List<Zone> getZones() {
-        return zones;
     }
 
     /**
@@ -137,6 +129,15 @@ public class ZoneManager {
     }
 
     /**
+     * Get all zones.
+     *
+     * @return List of zones.
+     */
+    public List<Zone> getZones() {
+        return zones;
+    }
+
+    /**
      * Get all zones for a given location.
      *
      * @return List of zones.
@@ -163,6 +164,23 @@ public class ZoneManager {
 
         for (Zone zone : SafeGuard.getZoneManager().getZones()) {
             if (zone.getOwners().contains(profile)) {
+                matches.add(zone);
+            }
+        }
+
+        return matches;
+    }
+
+    /**
+     * Get all zones which overlap/intersect the given volume.
+     *
+     * @return List of overlapping zones.
+     */
+    public List<Zone> getZonesOverlapping(Volume volume) {
+        List<Zone> matches = new ArrayList<>();
+
+        for (Zone zone : SafeGuard.getZoneManager().getZones()) {
+            if (zone.getVolume().intersects(volume)) {
                 matches.add(zone);
             }
         }

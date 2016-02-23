@@ -45,6 +45,14 @@ public abstract class Volume implements DataSerializable {
         return false;
     }
 
+    public boolean contains(Vector3i pos) {
+        return false;
+    }
+
+    public boolean intersects(Volume v2) {
+        return false;
+    }
+
     public static Volume from(DataView data) throws Exception {
         return null;
     }
