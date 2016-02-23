@@ -32,23 +32,18 @@ import org.spongepowered.api.event.block.InteractBlockEvent;
 
 import com.helion3.safeguard.SafeGuard;
 import com.helion3.safeguard.util.Format;
+import org.spongepowered.api.event.filter.cause.First;
 
 public class InteractBlockListener {
     private final String flag = "block.use";
 
     @Listener
-    public void onOpenInventory(final InteractBlockEvent.Secondary event) {
+    public void onOpenInventory(final InteractBlockEvent.Secondary event, @First Player player) {
         Optional<TileEntity> entity = event.getTargetBlock().getLocation().get().getTileEntity();
         if (!entity.isPresent()) {
             return;
         }
 
-        Optional<Player> optionalPlayer = event.getCause().first(Player.class);
-        if (!optionalPlayer.isPresent()) {
-            return;
-        }
-
-        Player player = optionalPlayer.get();
         if (player.hasPermission("safeguard.mod")) {
             return;
         }

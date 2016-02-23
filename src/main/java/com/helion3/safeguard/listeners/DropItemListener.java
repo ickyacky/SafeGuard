@@ -23,10 +23,9 @@
  */
 package com.helion3.safeguard.listeners;
 
-import java.util.Optional;
-
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.item.inventory.DropItemEvent;
 
 import com.helion3.safeguard.SafeGuard;
@@ -36,13 +35,7 @@ public class DropItemListener {
     private final String flag = "item.drop";
 
     @Listener
-    public void onDropItem(final DropItemEvent.Dispense event) {
-        Optional<Player> optionalPlayer = event.getCause().first(Player.class);
-        if (!optionalPlayer.isPresent()) {
-            return;
-        }
-
-        Player player = optionalPlayer.get();
+    public void onDropItem(final DropItemEvent.Dispense event, @First Player player) {
         if (player.hasPermission("safeguard.mod")) {
             return;
         }

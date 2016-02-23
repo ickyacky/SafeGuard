@@ -23,8 +23,7 @@
  */
 package com.helion3.safeguard.listeners;
 
-import java.util.Optional;
-
+import com.helion3.safeguard.util.BlockUtil;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.entity.living.player.Player;
@@ -33,19 +32,13 @@ import org.spongepowered.api.event.block.ChangeBlockEvent;
 
 import com.helion3.safeguard.SafeGuard;
 import com.helion3.safeguard.util.Format;
+import org.spongepowered.api.event.filter.cause.First;
 
 public class ChangeBlockListener {
     private final String flag = "block.change";
 
     @Listener
-    public void onChangeBlock(final ChangeBlockEvent event) {
-        Optional<Player> optionalPlayer = event.getCause().first(Player.class);
-        if (!optionalPlayer.isPresent()) {
-            return;
-        }
-
-        Player player = optionalPlayer.get();
-
+    public void onChangeBlock(final ChangeBlockEvent event, @First Player player) {
         if (player.hasPermission("safeguard.mod")) {
             return;
         }
@@ -63,8 +56,13 @@ public class ChangeBlockListener {
                     verb = "place";
                 }
 
-                player.sendMessage(Format.error(String.format("Zone does not allow you to %s this %s block.", verb, block)));
                 transaction.setValid(false);
+
+                // Should we message the player?
+                if (!BlockUtil.ignore(event, transaction)) {
+                    player.sendMessage(Format.error(String.format("Zone does not allow you to %s this %s block.",
+                            verb, block.replace("minecraft:", ""))));
+                }
             }
         }
     }
