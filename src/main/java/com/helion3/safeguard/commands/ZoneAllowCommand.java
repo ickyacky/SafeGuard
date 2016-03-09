@@ -25,7 +25,7 @@ package com.helion3.safeguard.commands;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CompletableFuture;
 
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
@@ -33,11 +33,8 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.profile.GameProfile;
-import org.spongepowered.api.profile.ProfileNotFoundException;
 import org.spongepowered.api.text.Text;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.MoreExecutors;
 import com.helion3.safeguard.SafeGuard;
 import com.helion3.safeguard.util.Format;
 import com.helion3.safeguard.zones.Zone;
@@ -76,25 +73,15 @@ public class ZoneAllowCommand implements CommandCallable {
             return CommandResult.empty();
         }
 
-        ListenableFuture<GameProfile> future = SafeGuard.getGame().getServer().getGameProfileManager().get(args[0]);
-        future.addListener(() -> {
-            try {
-                GameProfile profile = future.get();
+        CompletableFuture<GameProfile> future = SafeGuard.getGame().getServer().getGameProfileManager().get(args[0]);
+        future.thenAccept((profile) -> {
+            // Grant permissions and save
+            zone.allow(profile);
+            zone.save();
 
-                // Grant permissions and save
-                zone.allow(profile);
-                zone.save();
-
-                // Success
-                source.sendMessage(Format.success(profile.getName() + " granted permission in this zone!"));
-            } catch (InterruptedException | ExecutionException e) {
-                if (e instanceof ProfileNotFoundException) {
-                    source.sendMessage(Format.error("Could not find player with name " + args[0]));
-                } else {
-                    e.printStackTrace();
-                }
-            }
-        }, MoreExecutors.sameThreadExecutor());
+            // Success
+            source.sendMessage(Format.success(profile.getName() + " granted permission in this zone!"));
+        });
 
         return CommandResult.success();
     }

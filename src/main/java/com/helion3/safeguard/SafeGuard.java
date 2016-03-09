@@ -60,7 +60,7 @@ import com.helion3.safeguard.zones.ZoneManager;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 
-@Plugin(id = "SafeGuard", name = "SafeGuard", version = "1.0")
+@Plugin(id = "safeguard", name = "safeguard", version = "1.0")
 public class SafeGuard {
     private static Configuration config;
     private static Game game;
