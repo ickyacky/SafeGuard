@@ -36,6 +36,7 @@ public class HelpCommand {
         return CommandSpec.builder()
             .executor((source, args) -> {
                 source.sendMessage(Format.message("/sg pos", TextColors.GRAY, " - Mark a corner for a new zone."));
+                source.sendMessage(Format.message("/sg pos clear", TextColors.GRAY, " - Remove previously selected positions."));
                 source.sendMessage(Format.message("/sg pos fullheight", TextColors.GRAY, " - Expand cube to full map height."));
                 source.sendMessage(Format.message("/sg zone create [name]", TextColors.GRAY, " - Create a new zone with positions in buffer."));
                 source.sendMessage(Format.message("/sg zone allow (player)", TextColors.GRAY, " - Allow a player access to the zone."));
